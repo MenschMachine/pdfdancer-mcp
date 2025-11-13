@@ -11,7 +11,19 @@ A Model Context Protocol (MCP) server providing coding agents with searchable ac
 
 Add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
 
-### Cursor
+<details>
+<summary><b>Install with Smithery CLI</b></summary>
+
+The fastest way to install on any MCP-compatible client:
+
+```bash
+npx -y @smithery/cli install @pdfdancer/pdfdancer-mcp --client <client_name>
+```
+
+</details>
+
+<details>
+<summary><b>Install in Cursor</b></summary>
 
 #### Option 1: One-Click Installation (Recommended)
 Click the button below to install pdfdancer-mcp in Cursor:
@@ -34,7 +46,10 @@ Click the button below to install pdfdancer-mcp in Cursor:
 }
 ```
 
-### Claude Code
+</details>
+
+<details>
+<summary><b>Install in Claude Code</b></summary>
 
 Add the following to your Claude Code MCP settings configuration file:
 
@@ -53,7 +68,52 @@ Add the following to your Claude Code MCP settings configuration file:
 
 After adding the configuration, restart Claude Code to activate the MCP server.
 
-### VS Code / VS Code Insiders
+</details>
+
+<details>
+<summary><b>Install in Claude Desktop</b></summary>
+
+Add the following to your Claude Desktop MCP settings configuration file:
+
+**Location**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+After adding the configuration, restart Claude Desktop to activate the MCP server.
+
+</details>
+
+<details>
+<summary><b>Install in Windsurf</b></summary>
+
+1. Open Windsurf Settings
+2. Navigate to the MCP section
+3. Add the server configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in VS Code / VS Code Insiders</b></summary>
 
 When using MCP-compatible extensions in VS Code:
 
@@ -72,11 +132,16 @@ When using MCP-compatible extensions in VS Code:
 }
 ```
 
-### Windsurf
+</details>
 
-1. Open Windsurf Settings
-2. Navigate to the MCP section
-3. Add the server configuration:
+<details>
+<summary><b>Install in Cline (VS Code Extension)</b></summary>
+
+Cline automatically discovers MCP servers. To add pdfdancer-mcp:
+
+1. Open VS Code with Cline installed
+2. Open Cline's MCP Settings
+3. Add the server:
 
 ```json
 {
@@ -89,7 +154,10 @@ When using MCP-compatible extensions in VS Code:
 }
 ```
 
-### Zed
+</details>
+
+<details>
+<summary><b>Install in Zed</b></summary>
 
 1. Open Zed settings (`~/.config/zed/settings.json`)
 2. Add the following under the `assistant` section:
@@ -109,26 +177,10 @@ When using MCP-compatible extensions in VS Code:
 }
 ```
 
-### Cline (VS Code Extension)
+</details>
 
-Cline automatically discovers MCP servers. To add pdfdancer-mcp:
-
-1. Open VS Code with Cline installed
-2. Open Cline's MCP Settings
-3. Add the server:
-
-```json
-{
-  "mcpServers": {
-    "pdfdancer-mcp": {
-      "command": "npx",
-      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
-    }
-  }
-}
-```
-
-### Augment Code
+<details>
+<summary><b>Install in Augment Code</b></summary>
 
 #### Option 1: UI Configuration
 1. Open Augment Code settings
@@ -153,7 +205,10 @@ Edit your Augment Code configuration file:
 }
 ```
 
-### Roo Code
+</details>
+
+<details>
+<summary><b>Install in Roo Code</b></summary>
 
 1. Open Roo Code settings
 2. Locate the MCP configuration section
@@ -170,7 +225,178 @@ Edit your Augment Code configuration file:
 }
 ```
 
-### Other MCP-Compatible Clients
+</details>
+
+<details>
+<summary><b>Install in Gemini CLI</b></summary>
+
+Add to your Gemini CLI configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in Qwen Coder</b></summary>
+
+Add to your Qwen Coder MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in JetBrains AI Assistant</b></summary>
+
+1. Open JetBrains IDE settings
+2. Navigate to Tools → AI Assistant → MCP Servers
+3. Add new server configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in Amazon Q Developer CLI</b></summary>
+
+Configure in your Amazon Q Developer CLI settings:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in Warp</b></summary>
+
+Add to Warp's AI configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in GitHub Copilot CLI</b></summary>
+
+Configure in your GitHub Copilot CLI settings:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in BoltAI</b></summary>
+
+Add to BoltAI MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in Perplexity Desktop</b></summary>
+
+Configure in Perplexity Desktop settings:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Install in Docker</b></summary>
+
+Add to your Docker container configuration:
+
+```dockerfile
+FROM node:18
+
+RUN npx -y @pdfdancer/pdfdancer-mcp
+```
+
+Or use in docker-compose:
+
+```yaml
+services:
+  pdfdancer-mcp:
+    image: node:18
+    command: npx -y @pdfdancer/pdfdancer-mcp
+```
+
+</details>
+
+<details>
+<summary><b>Other MCP-Compatible Clients</b></summary>
 
 For any other MCP-compatible client, use the following standard configuration:
 
@@ -186,6 +412,8 @@ For any other MCP-compatible client, use the following standard configuration:
 ```
 
 Consult your client's documentation for the specific location of the MCP configuration file.
+
+</details>
 
 ### Custom Documentation Endpoint (Optional)
 
