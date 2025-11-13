@@ -36,6 +36,26 @@ npm run build # emits ESM output to dist/
    ```
 Any MCP-compatible client (Claude Desktop, MCP CLI, etc.) can now connect to the running process over stdio.
 
+## Configuration
+
+Set `DCS_BASE_URL` (or `DOCUSAURUS_SEARCH_BASE_URL`) to point at the running Cloudflare Worker or local dev server. It defaults to `http://localhost:8787`, which matches the worker dev server started via `npx wrangler dev` inside the `tools/docusaurus-cloudflare-search` project.
+
+Example:
+
+```bash
+export DCS_BASE_URL=https://your-worker.workers.dev
+npx -y . # or npm run dev
+```
+
 ## Tooling surface
 
-The server currently registers a single tool named `hello-world`. It accepts an optional `name` string and responds with a short greeting message, which makes it a minimal but functional MCP target for experimenting with pdfdancer.
+The MCP server now exposes:
+
+- `hello-world` – simple greeting used to verify connectivity.
+- `dcs-api-info` – `GET /` for high-level worker metadata.
+- `dcs-search` – `GET`/`POST /search` with `query`, optional `tag`, `maxResults`, and selectable method.
+- `dcs-list-indexes` – `GET /indexes` to enumerate search index tags stored in KV.
+- `dcs-list-content` – `GET /list-content` to inspect available cached markdown files.
+- `dcs-get-content` – `GET /content?route=/docs/...` to retrieve the stored markdown (frontmatter + body) for a specific route.
+
+Each tool returns both a human-readable summary and the raw JSON payload as structured content, making it easy to inspect or chain into other workflows.
