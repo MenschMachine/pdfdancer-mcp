@@ -14,9 +14,27 @@ npx -y @pdfdancer/pdfdancer-mcp
 npm install
 npm run dev   # starts the server via tsx for quick iteration
 npm run build # emits ESM output to dist/
+npm run lint  # type-check without emitting files
 ```
 
-`npm run build` must be executed before publishing so that the `dist/` artifacts shipped to npm include the compiled CLI entry point referenced by the package `bin` field.
+## Publishing to npm
+
+The package is configured to automatically build and lint before publishing:
+
+```bash
+# Login to npm (first time only)
+npm login
+
+# Publish to npm (prepublishOnly script runs automatically)
+npm run publish:npm
+```
+
+Or use the standard npm publish command:
+```bash
+npm publish
+```
+
+The `prepublishOnly` script ensures the package is linted and built before each publish.
 
 ## Local testing
 
