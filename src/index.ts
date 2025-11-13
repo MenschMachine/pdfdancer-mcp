@@ -311,7 +311,7 @@ async function main() {
       description: 'Explains the purpose of this server, key docs, and provides multi-language code samples.',
       inputSchema: {}
     },
-    async () => {
+    async (_args = {}) => {
       const text = renderHelpDocument(helpDocument);
       return {
         content: [
@@ -372,7 +372,7 @@ async function main() {
       description: 'List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.',
       inputSchema: {}
     },
-    async () => {
+    async (_args = {}) => {
       const data = await callApi<IndexListResponse>('/indexes');
       return {
         content: [
@@ -393,7 +393,7 @@ async function main() {
       description: 'List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval. Returns route paths that can be used with get-docs.',
       inputSchema: {}
     },
-    async () => {
+    async (_args = {}) => {
       const data = await callApi<ContentListResponse>('/list-content');
       return {
         content: [
