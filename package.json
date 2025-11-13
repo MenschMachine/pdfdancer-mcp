@@ -1,0 +1,40 @@
+{
+  "name": "@pdfdancer/pdfdancer-mcp",
+  "version": "0.1.0",
+  "description": "Tiny hello-world MCP server for pdfdancer experiments.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MenschMachine/pdfdancer-mcp.git"
+  },
+  "keywords": [],
+  "author": "pdfdancer",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "bugs": {
+    "url": "https://github.com/MenschMachine/pdfdancer-mcp/issues"
+  },
+  "homepage": "https://github.com/MenschMachine/pdfdancer-mcp#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.21.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

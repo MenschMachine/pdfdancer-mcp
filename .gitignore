@@ -1,0 +1,7 @@
+.smithery/
+node_modules
+.env
+/.idea
+/dist
+/logs
+.aider*
