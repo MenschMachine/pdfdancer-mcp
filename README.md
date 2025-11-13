@@ -2,12 +2,16 @@
 
 A Model Context Protocol (MCP) server providing coding agents with searchable access to official PDFDancer SDK documentation. This server enables AI coding assistants to discover and retrieve comprehensive documentation for building PDF manipulation applications using PDFDancer SDKs for Python, TypeScript, and Java.
 
-## Requirements
+---
+
+## For Users
+
+### Requirements
 
 - **Node.js** >= v18.0.0
 - **MCP Client**: Cursor, Claude Code, VS Code, Windsurf, Zed, or any other MCP-compatible client
 
-## Installation
+### Installation
 
 Add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
 
@@ -405,7 +409,7 @@ Consult your client's documentation for the specific location of the MCP configu
 
 </details>
 
-### Custom Documentation Endpoint (Optional)
+#### Custom Documentation Endpoint (Optional)
 
 If you're using a custom PDFDancer documentation endpoint, you can configure it via environment variable:
 
@@ -423,66 +427,7 @@ If you're using a custom PDFDancer documentation endpoint, you can configure it 
 }
 ```
 
-## Development
-
-```bash
-npm install
-npm run dev   # starts the server via tsx for quick iteration
-npm run build # emits ESM output to dist/
-npm run lint  # type-check without emitting files
-```
-
-## Publishing to npm
-
-The package is configured to automatically build and lint before publishing:
-
-```bash
-# Login to npm (first time only)
-npm login
-
-# Publish to npm (prepublishOnly script runs automatically)
-npm run publish:npm
-```
-
-Or use the standard npm publish command:
-```bash
-npm publish
-```
-
-The `prepublishOnly` script ensures the package is linted and built before each publish.
-
-## Local testing
-
-1. Build the distributable files so the CLI matches the eventual npm artifact:
-   ```bash
-   npm run build
-   ```
-2. Launch the stdio server exactly as `npx` would, but pointing to the local package directory:
-   ```bash
-   npx -y .
-   ```
-3. Alternatively, run the compiled output directly with Node:
-   ```bash
-   node dist/index.js
-   ```
-4. For the fastest inner loop while editing TypeScript, use:
-   ```bash
-   npm run dev
-   ```
-Any MCP-compatible client (Claude Desktop, MCP CLI, etc.) can now connect to the running process over stdio.
-
-## Configuration
-
-Set `PDFDANCER_DOCS_BASE_URL` to point to your PDFDancer documentation service endpoint if different from the default. The server defaults to the official PDFDancer documentation service.
-
-Example:
-
-```bash
-export PDFDANCER_DOCS_BASE_URL=https://your-docs-endpoint.com
-npx -y . # or npm run dev
-```
-
-## Available Tools
+### Available Tools
 
 The MCP server provides the following tools for accessing PDFDancer documentation:
 
@@ -496,7 +441,7 @@ The MCP server provides the following tools for accessing PDFDancer documentatio
 
 - **`list-routes`** – List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval.
 
-## Typical Workflow
+### Typical Workflow
 
 1. **Search for relevant topics**: Use `search-docs` with keywords like "authentication", "edit text", "add paragraph", or "forms"
 2. **Get detailed documentation**: Use `get-docs` with a route from the search results to retrieve complete documentation
@@ -505,7 +450,7 @@ The MCP server provides the following tools for accessing PDFDancer documentatio
 
 Each tool returns both human-readable formatted output and structured content for easy integration into coding workflows.
 
-## Demo: Using PDFDancer MCP with Claude Code
+### Demo: Using PDFDancer MCP with Claude Code
 
 Once you've installed the PDFDancer MCP server, you can prompt Claude Code to build PDF applications. Here's a real terminal session:
 
@@ -548,3 +493,66 @@ found 0 vulnerabilities</span>
 </div>
 
 The PDFDancer MCP enables Claude Code to instantly provide accurate, up-to-date documentation and code examples without hallucinating APIs.
+
+---
+
+## For Developers
+
+### Development
+
+```bash
+npm install
+npm run dev   # starts the server via tsx for quick iteration
+npm run build # emits ESM output to dist/
+npm run lint  # type-check without emitting files
+```
+
+### Publishing to npm
+
+The package is configured to automatically build and lint before publishing:
+
+```bash
+# Login to npm (first time only)
+npm login
+
+# Publish to npm (prepublishOnly script runs automatically)
+npm run publish:npm
+```
+
+Or use the standard npm publish command:
+```bash
+npm publish
+```
+
+The `prepublishOnly` script ensures the package is linted and built before each publish.
+
+### Local testing
+
+1. Build the distributable files so the CLI matches the eventual npm artifact:
+   ```bash
+   npm run build
+   ```
+2. Launch the stdio server exactly as `npx` would, but pointing to the local package directory:
+   ```bash
+   npx -y .
+   ```
+3. Alternatively, run the compiled output directly with Node:
+   ```bash
+   node dist/index.js
+   ```
+4. For the fastest inner loop while editing TypeScript, use:
+   ```bash
+   npm run dev
+   ```
+Any MCP-compatible client (Claude Desktop, MCP CLI, etc.) can now connect to the running process over stdio.
+
+### Configuration
+
+Set `PDFDANCER_DOCS_BASE_URL` to point to your PDFDancer documentation service endpoint if different from the default. The server defaults to the official PDFDancer documentation service.
+
+Example:
+
+```bash
+export PDFDANCER_DOCS_BASE_URL=https://your-docs-endpoint.com
+npx -y . # or npm run dev
+```
