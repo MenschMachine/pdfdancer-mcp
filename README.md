@@ -9,7 +9,7 @@ A Model Context Protocol (MCP) server providing coding agents with searchable ac
 
 ## Installation
 
-Once published to npm, you can add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
+Add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
 
 ### Cursor
 
