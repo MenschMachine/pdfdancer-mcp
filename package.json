@@ -12,13 +12,26 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
-    "lint": "tsc -p tsconfig.json --noEmit"
+    "lint": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run lint && npm run build",
+    "publish:npm": "npm publish --access public"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MenschMachine/pdfdancer-mcp.git"
   },
-  "keywords": [],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "pdfdancer",
+    "pdf",
+    "documentation",
+    "ai",
+    "coding-agent",
+    "sdk",
+    "pdf-manipulation",
+    "pdf-editing"
+  ],
   "author": "pdfdancer",
   "license": "MIT",
   "engines": {
@@ -28,6 +41,9 @@
     "url": "https://github.com/MenschMachine/pdfdancer-mcp/issues"
   },
   "homepage": "https://github.com/MenschMachine/pdfdancer-mcp#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.21.1",
     "zod": "^3.25.76"
