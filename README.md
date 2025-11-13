@@ -2,10 +2,207 @@
 
 A Model Context Protocol (MCP) server providing coding agents with searchable access to official PDFDancer SDK documentation. This server enables AI coding assistants to discover and retrieve comprehensive documentation for building PDF manipulation applications using PDFDancer SDKs for Python, TypeScript, and Java.
 
-Once published to npm it can be invoked directly via:
+## Requirements
 
-```bash
-npx -y @pdfdancer/pdfdancer-mcp
+- **Node.js** >= v18.0.0
+- **MCP Client**: Cursor, Claude Code, VS Code, Windsurf, Zed, or any other MCP-compatible client
+
+## Installation
+
+Add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
+
+### Cursor
+
+#### Option 1: One-Click Installation (Recommended)
+Click the button below to install pdfdancer-mcp in Cursor:
+
+[![Install in Cursor](https://img.shields.io/badge/Install%20in-Cursor-blue?style=for-the-badge&logo=cursor)](https://cursor.directory/install/pdfdancer-mcp)
+
+#### Option 2: Manual Configuration
+1. Open Cursor Settings
+2. Navigate to the "MCP" section
+3. Add the following configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Claude Code
+
+Add the following to your Claude Code MCP settings configuration file:
+
+**Location**: `~/.config/claude/claude_desktop_config.json` (Linux/macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+After adding the configuration, restart Claude Code to activate the MCP server.
+
+### VS Code / VS Code Insiders
+
+When using MCP-compatible extensions in VS Code:
+
+1. Install an MCP client extension (such as Cline, Roo Code, or similar)
+2. Open the extension's settings
+3. Add the MCP server configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Windsurf
+
+1. Open Windsurf Settings
+2. Navigate to the MCP section
+3. Add the server configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Zed
+
+1. Open Zed settings (`~/.config/zed/settings.json`)
+2. Add the following under the `assistant` section:
+
+```json
+{
+  "assistant": {
+    "version": "2",
+    "mcp_servers": [
+      {
+        "id": "pdfdancer-mcp",
+        "command": "npx",
+        "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+      }
+    ]
+  }
+}
+```
+
+### Cline (VS Code Extension)
+
+Cline automatically discovers MCP servers. To add pdfdancer-mcp:
+
+1. Open VS Code with Cline installed
+2. Open Cline's MCP Settings
+3. Add the server:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Augment Code
+
+#### Option 1: UI Configuration
+1. Open Augment Code settings
+2. Navigate to MCP Servers
+3. Click "Add Server"
+4. Enter:
+   - **Name**: `pdfdancer-mcp`
+   - **Command**: `npx`
+   - **Args**: `-y @pdfdancer/pdfdancer-mcp`
+
+#### Option 2: Manual Configuration
+Edit your Augment Code configuration file:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Roo Code
+
+1. Open Roo Code settings
+2. Locate the MCP configuration section
+3. Add:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+### Other MCP-Compatible Clients
+
+For any other MCP-compatible client, use the following standard configuration:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
+    }
+  }
+}
+```
+
+Consult your client's documentation for the specific location of the MCP configuration file.
+
+### Custom Documentation Endpoint (Optional)
+
+If you're using a custom PDFDancer documentation endpoint, you can configure it via environment variable:
+
+```json
+{
+  "mcpServers": {
+    "pdfdancer-mcp": {
+      "command": "npx",
+      "args": ["-y", "@pdfdancer/pdfdancer-mcp"],
+      "env": {
+        "PDFDANCER_DOCS_BASE_URL": "https://your-docs-endpoint.com"
+      }
+    }
+  }
+}
 ```
 
 ## Development
