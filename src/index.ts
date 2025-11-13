@@ -73,6 +73,22 @@ interface ContentResponse extends JsonObject {
   metadata?: Record<string, unknown>;
 }
 
+interface HelpDocument extends JsonObject {
+  title: string;
+  overview: string;
+  sections: Array<{
+    heading: string;
+    items: string[];
+  }>;
+  codeSamples: Array<{
+    language: string;
+    syntax: string;
+    path: string;
+    description: string;
+    snippet: string;
+  }>;
+}
+
 async function callApi<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const url = new URL(path, apiBase);
   if (options.searchParams) {
@@ -137,6 +153,146 @@ function summarizeSearchResponse(data: SearchResponse): string {
   return `${summary}\n${lines.join('\n')}`;
 }
 
+const helpDocument: HelpDocument = {
+  title: 'PDFDancer MCP helper',
+  overview:
+    'This MCP server gives coding agents high-fidelity access to PDFDancer documentation, SDK clients, and the Docusaurus Cloudflare Search worker so they can implement pdfdancer-based features end-to-end.',
+  sections: [
+    {
+      heading: 'Core documentation surfaces',
+      items: [
+        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-api-docs`: Official Docusaurus site that unifies Java, Python, and TypeScript docs. Run `npm install && npm start` to browse locally (content in `docs/`, SDK submodules in `external/`).',
+        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript/_main`: TypeScript SDK source + README with install, retry config, and selectors. Examples live in `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript-examples`.',
+        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python/_main`: Python SDK with virtualenv-ready README. Extra runnable snippets sit in `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python-examples`.',
+        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java`: Java SDK (Gradle) and `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java-examples` for CLI-ready samples.'
+      ]
+    },
+    {
+      heading: 'Using this MCP server',
+      items: [
+        '- Set `DCS_BASE_URL` (defaults to `http://localhost:8787`) so the `dcs-*` tools hit your Cloudflare Worker or local `wrangler dev` instance.',
+        '- Keep `PDFDANCER_TOKEN` and optional `PDFDANCER_BASE_URL` available when running the SDK snippets below.',
+        '- Tools: `hello-world`, `help`, `dcs-api-info`, `dcs-search`, `dcs-list-indexes`, `dcs-list-content`, `dcs-get-content`.',
+        '- Call `npx -y .` (after `npm run build`) to expose these tools to clients like Claude Desktop.'
+      ]
+    },
+    {
+      heading: 'Typical workflow for coding agents',
+      items: [
+        '1. Consult the API docs (via this help text or the Docusaurus site) to confirm object models and required auth.',
+        '2. Use the language-specific client README + examples to scaffold code (samples below).',
+        '3. Exercise the worker endpoints with `dcs-search` etc. to verify the documentation index for your project is populated.',
+        '4. Implant validated snippets back into your feature branch, keeping env vars and retry/backoff guidance aligned with the SDK defaults.'
+      ]
+    }
+  ],
+  codeSamples: [
+    {
+      language: 'TypeScript',
+      syntax: 'ts',
+      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript/_main/README.md',
+      description: 'Open an existing PDF, reposition text, add a paragraph, and save.',
+      snippet: `import { PDFDancer, Color, StandardFonts } from 'pdfdancer-client-typescript';
+import { promises as fs } from 'node:fs';
+
+async function run() {
+  const pdfBytes = await fs.readFile('input.pdf');
+  const pdf = await PDFDancer.open(pdfBytes); // token/base URL auto-read from env
+
+  const heading = (await pdf.page(0).selectParagraphsStartingWith('Executive Summary'))[0];
+  await heading.moveTo(72, 680);
+  await heading.edit().replace('Overview').apply();
+
+  await pdf.page(0).newParagraph()
+    .text('Generated with PDFDancer')
+    .font(StandardFonts.HELVETICA, 12)
+    .color(new Color(70, 70, 70))
+    .at(72, 520)
+    .apply();
+
+  await pdf.save('output.pdf');
+}
+
+run().catch(console.error);`
+    },
+    {
+      language: 'Python',
+      syntax: 'python',
+      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python/_main/README.md',
+      description: 'Context-managed session that edits an existing document and appends content.',
+      snippet: `from pathlib import Path
+from pdfdancer import Color, PDFDancer, StandardFonts
+
+with PDFDancer.open(Path("input.pdf")) as pdf:
+    heading = pdf.page(0).select_paragraphs_starting_with("Executive Summary")[0]
+    heading.move_to(72, 680)
+    with heading.edit() as editor:
+        editor.replace("Overview")
+
+    pdf.new_paragraph() \\
+        .text("Generated with PDFDancer") \\
+        .font(StandardFonts.HELVETICA, 12) \\
+        .color(Color(70, 70, 70)) \\
+        .line_spacing(1.4) \\
+        .at(page_index=0, x=72, y=520) \\
+        .add()
+
+    pdf.save("output.pdf")`
+    },
+    {
+      language: 'Java',
+      syntax: 'java',
+      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java/README.md',
+      description: 'Gradle/Maven friendly snippet that creates a session, edits paragraphs, and saves.',
+      snippet: `import com.pdfdancer.client.rest.PDFDancer;
+import com.pdfdancer.client.rest.TextParagraphReference;
+import com.pdfdancer.common.model.Color;
+import com.pdfdancer.common.util.StandardFonts;
+
+public class EditPdfExample {
+    public static void main(String[] args) throws Exception {
+        PDFDancer pdf = PDFDancer.createSession("input.pdf"); // token pulled from env
+
+        TextParagraphReference heading = pdf.page(0)
+            .selectParagraphsStartingWith("Executive Summary")
+            .get(0);
+
+        heading.moveTo(72, 680);
+        heading.edit()
+            .replace("Overview")
+            .font(StandardFonts.HELVETICA.getFontName(), 14)
+            .lineSpacing(1.3)
+            .color(new Color(40, 40, 40))
+            .apply();
+
+        pdf.newParagraph()
+            .text("Generated with PDFDancer")
+            .font(StandardFonts.HELVETICA.getFontName(), 12)
+            .color(new Color(70, 70, 70))
+            .at(0, 72, 520)
+            .add();
+
+        pdf.save("output.pdf");
+    }
+}`
+    }
+  ]
+};
+
+function renderHelpDocument(doc: HelpDocument): string {
+  const sections = doc.sections
+    .map(section => `### ${section.heading}\n${section.items.join('\n')}`)
+    .join('\n\n');
+
+  const samples = doc.codeSamples
+    .map(sample => {
+      return `### ${sample.language} sample (${sample.path})\n${sample.description}\n\`\`\`${sample.syntax}\n${sample.snippet}\n\`\`\``;
+    })
+    .join('\n\n');
+
+  return `# ${doc.title}\n\n${doc.overview}\n\n${sections}\n\n## SDK code samples\n\n${samples}`.trim();
+}
+
 async function main() {
   const server = new McpServer({
     name: 'pdfdancer-mcp',
@@ -165,6 +321,27 @@ async function main() {
             text
           }
         ]
+      };
+    }
+  );
+
+  server.registerTool(
+    'help',
+    {
+      title: 'PDFDancer MCP help',
+      description: 'Explains the purpose of this server, key docs, and provides multi-language code samples.',
+      inputSchema: {}
+    },
+    async () => {
+      const text = renderHelpDocument(helpDocument);
+      return {
+        content: [
+          {
+            type: 'text',
+            text
+          }
+        ],
+        structuredContent: helpDocument
       };
     }
   );

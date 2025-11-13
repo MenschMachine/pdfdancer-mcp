@@ -52,6 +52,7 @@ npx -y . # or npm run dev
 The MCP server now exposes:
 
 - `hello-world` – simple greeting used to verify connectivity.
+- `help` – curated overview of pdfdancer docs plus Java/TS/Python sample code.
 - `dcs-api-info` – `GET /` for high-level worker metadata.
 - `dcs-search` – `GET`/`POST /search` with `query`, optional `tag`, `maxResults`, and selectable method.
 - `dcs-list-indexes` – `GET /indexes` to enumerate search index tags stored in KV.
