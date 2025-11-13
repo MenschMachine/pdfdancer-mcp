@@ -34,10 +34,6 @@
   ],
   "author": "pdfdancer",
   "license": "MIT",
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/MenschMachine"
-  },
   "engines": {
     "node": ">=18.17"
   },
