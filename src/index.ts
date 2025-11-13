@@ -308,10 +308,9 @@ async function main() {
     'help',
     {
       title: 'PDFDancer MCP help',
-      description: 'Explains the purpose of this server, key docs, and provides multi-language code samples.',
-      inputSchema: {}
+      description: 'Explains the purpose of this server, key docs, and provides multi-language code samples.'
     },
-    async (_args = {}) => {
+    async () => {
       const text = renderHelpDocument(helpDocument);
       return {
         content: [
@@ -369,10 +368,9 @@ async function main() {
     'list-indexes',
     {
       title: 'List available documentation indexes',
-      description: 'List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.',
-      inputSchema: {}
+      description: 'List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.'
     },
-    async (_args = {}) => {
+    async () => {
       const data = await callApi<IndexListResponse>('/indexes');
       return {
         content: [
@@ -390,10 +388,9 @@ async function main() {
     'list-routes',
     {
       title: 'List all documentation routes',
-      description: 'List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval. Returns route paths that can be used with get-docs.',
-      inputSchema: {}
+      description: 'List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval. Returns route paths that can be used with get-docs.'
     },
-    async (_args = {}) => {
+    async () => {
       const data = await callApi<ContentListResponse>('/list-content');
       return {
         content: [
