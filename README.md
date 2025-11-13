@@ -1,6 +1,8 @@
 # pdfdancer-mcp
 
-A tiny Model Context Protocol (MCP) server written in TypeScript that exposes a single `hello-world` tool over stdio. Once published to npm it can be invoked directly via:
+A Model Context Protocol (MCP) server providing coding agents with searchable access to official PDFDancer SDK documentation. This server enables AI coding assistants to discover and retrieve comprehensive documentation for building PDF manipulation applications using PDFDancer SDKs for Python, TypeScript, and Java.
+
+Once published to npm it can be invoked directly via:
 
 ```bash
 npx -y @pdfdancer/pdfdancer-mcp
@@ -38,25 +40,34 @@ Any MCP-compatible client (Claude Desktop, MCP CLI, etc.) can now connect to the
 
 ## Configuration
 
-Set `DCS_BASE_URL` (or `DOCUSAURUS_SEARCH_BASE_URL`) to point at the running Cloudflare Worker or local dev server. It defaults to `http://localhost:8787`, which matches the worker dev server started via `npx wrangler dev` inside the `tools/docusaurus-cloudflare-search` project.
+Set `PDFDANCER_DOCS_BASE_URL` to point to your PDFDancer documentation service endpoint if different from the default. The server defaults to the official PDFDancer documentation service.
 
 Example:
 
 ```bash
-export DCS_BASE_URL=https://your-worker.workers.dev
+export PDFDANCER_DOCS_BASE_URL=https://your-docs-endpoint.com
 npx -y . # or npm run dev
 ```
 
-## Tooling surface
+## Available Tools
 
-The MCP server now exposes:
+The MCP server provides the following tools for accessing PDFDancer documentation:
 
-- `hello-world` – simple greeting used to verify connectivity.
-- `help` – curated overview of pdfdancer docs plus Java/TS/Python sample code.
-- `dcs-api-info` – `GET /` for high-level worker metadata.
-- `dcs-search` – `GET`/`POST /search` with `query`, optional `tag`, `maxResults`, and selectable method.
-- `dcs-list-indexes` – `GET /indexes` to enumerate search index tags stored in KV.
-- `dcs-list-content` – `GET /list-content` to inspect available cached markdown files.
-- `dcs-get-content` – `GET /content?route=/docs/...` to retrieve the stored markdown (frontmatter + body) for a specific route.
+- **`help`** – Display comprehensive overview of PDFDancer SDK capabilities with multi-language code samples (TypeScript, Python, Java) demonstrating common PDF manipulation tasks.
 
-Each tool returns both a human-readable summary and the raw JSON payload as structured content, making it easy to inspect or chain into other workflows.
+- **`search-docs`** – Search the official PDFDancer SDK documentation by keyword. Returns matching documentation routes with titles, content snippets, and relevance scores. Use this to find information about PDFDancer features, APIs, and usage examples.
+
+- **`get-docs`** – Retrieve the full documentation content for a specific route. After finding relevant documentation with `search-docs`, use this tool to get the complete markdown content including code examples, detailed explanations, and API references.
+
+- **`list-indexes`** – List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.
+
+- **`list-routes`** – List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval.
+
+## Typical Workflow
+
+1. **Search for relevant topics**: Use `search-docs` with keywords like "authentication", "edit text", "add paragraph", or "forms"
+2. **Get detailed documentation**: Use `get-docs` with a route from the search results to retrieve complete documentation
+3. **Review code samples**: Use `help` to see working examples in TypeScript, Python, or Java
+4. **Implement your solution**: Apply the patterns from the documentation to build your PDF manipulation features
+
+Each tool returns both human-readable formatted output and structured content for easy integration into coding workflows.

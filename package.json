@@ -1,7 +1,7 @@
 {
   "name": "@pdfdancer/pdfdancer-mcp",
   "version": "0.1.0",
-  "description": "Tiny hello-world MCP server for pdfdancer experiments.",
+  "description": "MCP server providing coding agents with searchable access to official PDFDancer SDK documentation for building PDF manipulation applications.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

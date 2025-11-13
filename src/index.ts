@@ -6,8 +6,7 @@ import packageJson from '../package.json' with { type: 'json' };
 
 const pkg = packageJson as { version?: string };
 const rawBaseUrl =
-  process.env.DCS_BASE_URL ??
-  process.env.DOCUSAURUS_SEARCH_BASE_URL ??
+  process.env.PDFDANCER_DOCS_BASE_URL ??
   'https://docusaurus-cloudflare-search.michael-lahr-0b0.workers.dev/';
 
 let apiBase: URL;
@@ -15,7 +14,7 @@ try {
   apiBase = new URL(rawBaseUrl);
 } catch (error) {
   console.error(
-    `Invalid Docusaurus search base URL "${rawBaseUrl}". Set DCS_BASE_URL or DOCUSAURUS_SEARCH_BASE_URL to a valid URL.`,
+    `Invalid PDFDancer documentation base URL "${rawBaseUrl}". Set PDFDANCER_DOCS_BASE_URL to a valid URL.`,
     error
   );
   process.exit(1);
@@ -154,35 +153,40 @@ function summarizeSearchResponse(data: SearchResponse): string {
 }
 
 const helpDocument: HelpDocument = {
-  title: 'PDFDancer MCP helper',
+  title: 'PDFDancer SDK Documentation',
   overview:
-    'This MCP server gives coding agents high-fidelity access to PDFDancer documentation, SDK clients, and the Docusaurus Cloudflare Search worker so they can implement pdfdancer-based features end-to-end.',
+    'This MCP server provides coding agents with searchable access to official PDFDancer SDK documentation. Use these tools to discover how to build PDF manipulation applications with pixel-perfect control over PDF documents using PDFDancer SDKs for Python, TypeScript, and Java.',
   sections: [
     {
-      heading: 'Core documentation surfaces',
+      heading: 'What is PDFDancer?',
       items: [
-        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-api-docs`: Official Docusaurus site that unifies Java, Python, and TypeScript docs. Run `npm install && npm start` to browse locally (content in `docs/`, SDK submodules in `external/`).',
-        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript/_main`: TypeScript SDK source + README with install, retry config, and selectors. Examples live in `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript-examples`.',
-        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python/_main`: Python SDK with virtualenv-ready README. Extra runnable snippets sit in `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python-examples`.',
-        '- `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java`: Java SDK (Gradle) and `/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java-examples` for CLI-ready samples.'
+        '- **Pixel-perfect PDF control**: Edit any PDF with exact coordinate positioning and surgical text replacement',
+        '- **Edit existing PDFs**: Modify PDFs you did not create - invoices, forms, contracts, reports from any source',
+        '- **Smart text handling**: Paragraph-aware editing that preserves layout and formatting',
+        '- **Embedded font support**: Add text with embedded fonts for consistent rendering across all viewers',
+        '- **Form manipulation**: Programmatically fill, update, or delete AcroForm fields',
+        '- **Multi-language SDKs**: Available for Python 3.10+, TypeScript (Node.js 20+), and Java 11+',
+        '- **Vector graphics control**: Full control over lines, curves, shapes, and complex drawings'
       ]
     },
     {
-      heading: 'Using this MCP server',
+      heading: 'Available MCP Tools',
       items: [
-        '- Set `DCS_BASE_URL` (defaults to `http://localhost:8787`) so the `dcs-*` tools hit your Cloudflare Worker or local `wrangler dev` instance.',
-        '- Keep `PDFDANCER_TOKEN` and optional `PDFDANCER_BASE_URL` available when running the SDK snippets below.',
-        '- Tools: `hello-world`, `help`, `dcs-api-info`, `dcs-search`, `dcs-list-indexes`, `dcs-list-content`, `dcs-get-content`.',
-        '- Call `npx -y .` (after `npm run build`) to expose these tools to clients like Claude Desktop.'
+        '- **search-docs**: Search PDFDancer documentation by keyword to find relevant APIs and examples',
+        '- **get-docs**: Retrieve complete documentation for a specific route with code examples',
+        '- **list-indexes**: Discover available SDK versions, languages, and documentation categories',
+        '- **list-routes**: Browse all available documentation pages and guides',
+        '- **help**: Display this overview with multi-language code samples'
       ]
     },
     {
-      heading: 'Typical workflow for coding agents',
+      heading: 'Typical workflow for building PDFDancer applications',
       items: [
-        '1. Consult the API docs (via this help text or the Docusaurus site) to confirm object models and required auth.',
-        '2. Use the language-specific client README + examples to scaffold code (samples below).',
-        '3. Exercise the worker endpoints with `dcs-search` etc. to verify the documentation index for your project is populated.',
-        '4. Implant validated snippets back into your feature branch, keeping env vars and retry/backoff guidance aligned with the SDK defaults.'
+        '1. **Search documentation**: Use `search-docs` with keywords like "authentication", "edit text", "add paragraph", or "forms" to find relevant APIs',
+        '2. **Get detailed docs**: Use `get-docs` with the route from search results to retrieve complete documentation with code examples',
+        '3. **Review code samples**: Study the TypeScript, Python, or Java examples below that demonstrate common PDF manipulation tasks',
+        '4. **Set up authentication**: Configure `PDFDANCER_TOKEN` environment variable (and optionally `PDFDANCER_BASE_URL` for self-hosted instances)',
+        '5. **Implement features**: Use the SDK to open existing PDFs, locate elements by text or coordinates, edit content, add new elements, and save results'
       ]
     }
   ],
@@ -190,8 +194,8 @@ const helpDocument: HelpDocument = {
     {
       language: 'TypeScript',
       syntax: 'ts',
-      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-typescript/_main/README.md',
-      description: 'Open an existing PDF, reposition text, add a paragraph, and save.',
+      path: 'TypeScript SDK',
+      description: 'Open an existing PDF, locate and edit a paragraph by text prefix, add new content with custom styling, and save the modified document.',
       snippet: `import { PDFDancer, Color, StandardFonts } from 'pdfdancer-client-typescript';
 import { promises as fs } from 'node:fs';
 
@@ -218,8 +222,8 @@ run().catch(console.error);`
     {
       language: 'Python',
       syntax: 'python',
-      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-python/_main/README.md',
-      description: 'Context-managed session that edits an existing document and appends content.',
+      path: 'Python SDK',
+      description: 'Context-managed session demonstrating how to open a PDF, locate and move text paragraphs, edit their content, and add new styled paragraphs.',
       snippet: `from pathlib import Path
 from pdfdancer import Color, PDFDancer, StandardFonts
 
@@ -242,8 +246,8 @@ with PDFDancer.open(Path("input.pdf")) as pdf:
     {
       language: 'Java',
       syntax: 'java',
-      path: '/Users/michael/Code/TFC/pdfdancer/pdfdancer-client-java/README.md',
-      description: 'Gradle/Maven friendly snippet that creates a session, edits paragraphs, and saves.',
+      path: 'Java SDK',
+      description: 'Java example showing how to create a PDF session, locate and reposition text elements, apply styling changes, and add new paragraphs programmatically.',
       snippet: `import com.pdfdancer.client.rest.PDFDancer;
 import com.pdfdancer.client.rest.TextParagraphReference;
 import com.pdfdancer.common.model.Color;
@@ -297,33 +301,8 @@ async function main() {
   const server = new McpServer({
     name: 'pdfdancer-mcp',
     version: pkg.version ?? '0.0.0',
-    description: 'MCP helpers for Docusaurus Cloudflare Search endpoints'
+    description: 'MCP server providing searchable access to PDFDancer SDK documentation'
   });
-
-  server.registerTool(
-    'hello-world',
-    {
-      title: 'Friendly hello',
-      description: 'Returns a pdfdancer-branded greeting',
-      inputSchema: {
-        name: z.string().optional()
-      }
-    },
-    async ({ name }) => {
-      const text = name
-        ? `Hello, ${name}! Thanks for trying pdfdancer-mcp.`
-        : 'Hello from pdfdancer-mcp! Pass a name to personalize this message.';
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text
-          }
-        ]
-      };
-    }
-  );
 
   server.registerTool(
     'help',
@@ -347,31 +326,10 @@ async function main() {
   );
 
   server.registerTool(
-    'dcs-api-info',
+    'search-docs',
     {
-      title: 'Get API metadata',
-      description: `Calls GET ${apiBase.origin}/ to retrieve the worker's overview.`,
-      inputSchema: {}
-    },
-    async () => {
-      const data = await callApi<Record<string, unknown>>('/');
-      return {
-        content: [
-          {
-            type: 'text',
-            text: formatJsonBlock('API info', data)
-          }
-        ],
-        structuredContent: data
-      };
-    }
-  );
-
-  server.registerTool(
-    'dcs-search',
-    {
-      title: 'Search documentation',
-      description: 'Executes a search query via GET or POST /search.',
+      title: 'Search PDFDancer documentation',
+      description: 'Search the official PDFDancer SDK documentation by keyword. Returns matching documentation routes with titles, content snippets, and relevance scores. Use this to find information about PDFDancer features, APIs, and usage examples.',
       inputSchema: {
         query: z.string().min(1, 'query is required'),
         tag: z.string().optional(),
@@ -408,10 +366,10 @@ async function main() {
   );
 
   server.registerTool(
-    'dcs-list-indexes',
+    'list-indexes',
     {
-      title: 'List available indexes',
-      description: 'Calls GET /indexes to enumerate search index tags.',
+      title: 'List available documentation indexes',
+      description: 'List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.',
       inputSchema: {}
     },
     async () => {
@@ -429,10 +387,10 @@ async function main() {
   );
 
   server.registerTool(
-    'dcs-list-content',
+    'list-routes',
     {
-      title: 'List stored content files',
-      description: 'Calls GET /list-content to show cached markdown routes available in KV.',
+      title: 'List all documentation routes',
+      description: 'List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval. Returns route paths that can be used with get-docs.',
       inputSchema: {}
     },
     async () => {
@@ -450,10 +408,10 @@ async function main() {
   );
 
   server.registerTool(
-    'dcs-get-content',
+    'get-docs',
     {
-      title: 'Retrieve markdown content',
-      description: 'Calls GET /content?route=/path to fetch the stored markdown for a route.',
+      title: 'Get PDFDancer documentation',
+      description: 'Retrieve the full documentation content for a specific route. After finding relevant documentation with search-docs, use this tool to get the complete markdown content including code examples, detailed explanations, and API references.',
       inputSchema: {
         route: z.string().regex(/^\/.*/, 'route must start with /')
       }
