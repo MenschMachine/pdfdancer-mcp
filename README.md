@@ -504,3 +504,47 @@ The MCP server provides the following tools for accessing PDFDancer documentatio
 4. **Implement your solution**: Apply the patterns from the documentation to build your PDF manipulation features
 
 Each tool returns both human-readable formatted output and structured content for easy integration into coding workflows.
+
+## Demo: Using PDFDancer MCP with Claude Code
+
+Once you've installed the PDFDancer MCP server, you can prompt Claude Code to build PDF applications. Here's a real terminal session:
+
+<div style="background: #1a1a1a; color: #e0e0e0; padding: 20px; border-radius: 8px; font-family: 'Monaco', 'Courier New', monospace; overflow-x: auto; line-height: 1.6;">
+
+<span style="color: #ff9900;">> create a typescript project which creates a pdf with the words "Hello World" on it. Use pdfdancer</span>
+
+<span style="color: #e0e0e0;">@ I'll help you create a TypeScript project that generates a PDF with "Hello World" using PDFDancer. Let me start by exploring the PDFDancer documentation.</span>
+
+<span style="color: #ff9900;">pdfdancer - search-docs (MCP)</span>
+<span style="color: #e0e0e0;">query: "create new PDF from scratch"</span>
+
+<span style="color: #90EE90;">$ npm init -y</span>
+<span style="color: #e0e0e0;">Wrote to /Users/michael/Code/tmp/pdf-generator/package.json</span>
+
+<span style="color: #90EE90;">$ npm install --save-dev typescript @types/node</span>
+<span style="color: #e0e0e0;">added 3 packages, and audited 4 packages in 2s
+found 0 vulnerabilities</span>
+
+<span style="color: #90EE90;">$ npm install pdfdancer-client-typescript</span>
+<span style="color: #e0e0e0;">added 1 package, and audited 5 packages in 3s
+found 0 vulnerabilities</span>
+
+<span style="color: #90EE90;">Write(src/main.ts)</span>
+<span style="color: #e0e0e0;">Wrote 22 lines to src/main.ts</span>
+
+<span style="color: #90EE90;">$ npm run build</span>
+<span style="color: #e0e0e0;">> pdf-generator@1.0.0 build
+> tsc</span>
+
+<span style="color: #90EE90;">$ npm start</span>
+<span style="color: #e0e0e0;">> pdf-generator@1.0.0 start
+> npm run build && node dist/main.js</span>
+
+<span style="color: #90EE90;">$ ls -lh output.pdf</span>
+<span style="color: #e0e0e0;">-rw-r--r-- 1 michael staff 89K Nov 13 12:33 output.pdf</span>
+
+<span style="color: #e0e0e0;">Done! I've successfully created a TypeScript project that generates a PDF with "Hello World" using PDFDancer.</span>
+
+</div>
+
+The PDFDancer MCP enables Claude Code to instantly provide accurate, up-to-date documentation and code examples without hallucinating APIs.
