@@ -523,7 +523,7 @@ Each tool returns both human-readable formatted output and structured content fo
 
 Once you've installed the PDFDancer MCP server, you can prompt Claude Code to build PDF applications. Here's a real terminal session:
 
-![PDFDancer MCP Demo Terminal Session](demo-screenshot.png)
+<img src="demo-screenshot.png" alt="PDFDancer MCP Demo Terminal Session" width="100%">
 
 **What happened:**
 1. User prompted: `create a typescript project which creates a pdf with the words "Hello World" on it. Use pdfdancer`
