@@ -11,16 +11,6 @@ A Model Context Protocol (MCP) server providing coding agents with searchable ac
 
 Add this MCP server to your preferred AI coding assistant. Choose your client below for specific installation instructions.
 
-<details>
-<summary><b>Install with Smithery CLI</b></summary>
-
-The fastest way to install on any MCP-compatible client:
-
-```bash
-npx -y @smithery/cli install @pdfdancer/pdfdancer-mcp --client <client_name>
-```
-
-</details>
 
 <details>
 <summary><b>Install in Cursor</b></summary>
