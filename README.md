@@ -44,6 +44,16 @@ Click the button below to install pdfdancer-mcp in Cursor:
 <details>
 <summary><b>Install in Claude Code</b></summary>
 
+#### Option 1: CLI Command (Recommended)
+Run this command in your terminal:
+
+```bash
+claude mcp add --transport stdio pdfdancer-mcp -- npx -y @pdfdancer/pdfdancer-mcp
+```
+
+Verify installation with: `claude mcp list`
+
+#### Option 2: Manual Configuration
 Add the following to your Claude Code MCP settings configuration file:
 
 **Location**: `~/.config/claude/claude_desktop_config.json` (Linux/macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
@@ -66,6 +76,10 @@ After adding the configuration, restart Claude Code to activate the MCP server.
 <details>
 <summary><b>Install in Claude Desktop</b></summary>
 
+#### Option 1: Desktop Extensions (Easiest - Coming Soon)
+When available, navigate to Settings > Extensions > Browse extensions and search for "pdfdancer-mcp" for one-click installation.
+
+#### Option 2: Manual Configuration
 Add the following to your Claude Desktop MCP settings configuration file:
 
 **Location**: `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows)
@@ -88,9 +102,14 @@ After adding the configuration, restart Claude Desktop to activate the MCP serve
 <details>
 <summary><b>Install in Windsurf</b></summary>
 
-1. Open Windsurf Settings
-2. Navigate to the MCP section
-3. Add the server configuration:
+#### Option 1: Using Settings UI (Recommended)
+1. Open Windsurf Settings (click the Windsurf icon in bottom right, or Cmd+Shift+P / Ctrl+Shift+P and type "Open Windsurf Settings")
+2. Navigate to Advanced Settings > Cascade > Model Context Protocol
+3. Click the MCP servers button (hammer icon), then Configure
+4. Add the server using the configuration interface
+
+#### Option 2: Manual Configuration
+Edit the `mcp_config.json` file and add:
 
 ```json
 {
@@ -130,11 +149,19 @@ When using MCP-compatible extensions in VS Code:
 <details>
 <summary><b>Install in Cline (VS Code Extension)</b></summary>
 
-Cline automatically discovers MCP servers. To add pdfdancer-mcp:
+#### Option 1: Using AI Assistant (Easiest)
+In the Cline chatbot, use this prompt:
+```
+install the MCP server named `@pdfdancer/pdfdancer-mcp` for Cline - ensure the mcp settings are updated
+```
 
-1. Open VS Code with Cline installed
-2. Open Cline's MCP Settings
-3. Add the server:
+#### Option 2: Using MCP Servers UI
+1. Click the MCP Servers icon in Cline's top navigation bar
+2. Select "Configure MCP Servers"
+3. Browse the MCP marketplace or add manually
+
+#### Option 3: Manual Configuration
+Edit `cline_mcp_settings.json`:
 
 ```json
 {
@@ -152,8 +179,21 @@ Cline automatically discovers MCP servers. To add pdfdancer-mcp:
 <details>
 <summary><b>Install in Zed</b></summary>
 
-1. Open Zed settings (`~/.config/zed/settings.json`)
-2. Add the following under the `assistant` section:
+#### Option 1: Extension Method (Recommended - If Available)
+1. Open Command Palette (search for "zed: extensions")
+2. Check the extensions marketplace for "pdfdancer-mcp"
+3. Install the extension if available - Zed will guide you through setup
+
+#### Option 2: Custom Server via UI
+1. Open the Agent Panel's Settings view (or use the "agent: open settings" action)
+2. In the Context Servers section, click "+ Add Context Server"
+3. Enter the server name: `pdfdancer-mcp`
+4. Click Add Server and configure:
+   - **Command**: `npx`
+   - **Args**: `-y @pdfdancer/pdfdancer-mcp`
+
+#### Option 3: Manual Configuration
+Open Zed settings (`~/.config/zed/settings.json`) and add:
 
 ```json
 {
@@ -170,12 +210,17 @@ Cline automatically discovers MCP servers. To add pdfdancer-mcp:
 }
 ```
 
+Verify by checking the indicator dot next to the server name in Agent Panel settings - green means it's running correctly.
+
 </details>
 
 <details>
 <summary><b>Install in Augment Code</b></summary>
 
-#### Option 1: UI Configuration
+#### Option 1: Easy MCP (Recommended)
+Augment Code's "Easy MCP" feature provides one-click integrations for popular tools. Check the Easy MCP panel in settings for quick installation.
+
+#### Option 2: UI Configuration
 1. Open Augment Code settings
 2. Navigate to MCP Servers
 3. Click "Add Server"
@@ -184,16 +229,17 @@ Cline automatically discovers MCP servers. To add pdfdancer-mcp:
    - **Command**: `npx`
    - **Args**: `-y @pdfdancer/pdfdancer-mcp`
 
-#### Option 2: Manual Configuration
+#### Option 3: Manual Configuration
 Edit your Augment Code configuration file:
 
 ```json
 {
-  "mcpServers": {
-    "pdfdancer-mcp": {
+  "augment.advanced": {
+    "mcpServers": [{
+      "name": "pdfdancer-mcp",
       "command": "npx",
       "args": ["-y", "@pdfdancer/pdfdancer-mcp"]
-    }
+    }]
   }
 }
 ```
@@ -203,9 +249,14 @@ Edit your Augment Code configuration file:
 <details>
 <summary><b>Install in Roo Code</b></summary>
 
-1. Open Roo Code settings
-2. Locate the MCP configuration section
-3. Add:
+#### Option 1: Using MCP Settings Panel (Recommended)
+1. Click the Roo Code MCP icon
+2. Click "Edit Global MCP"
+3. Paste the configuration below inside the `mcpServers` object
+4. Save the file
+
+#### Option 2: Manual Configuration
+Edit `mcp_settings.json` (Global) or `.roo/mcp.json` (Project-level):
 
 ```json
 {
@@ -217,6 +268,8 @@ Edit your Augment Code configuration file:
   }
 }
 ```
+
+**Note**: Global configuration applies across all workspaces, while project-level is specific to your project's root.
 
 </details>
 
@@ -259,9 +312,24 @@ Add to your Qwen Coder MCP settings:
 <details>
 <summary><b>Install in JetBrains AI Assistant</b></summary>
 
-1. Open JetBrains IDE settings
-2. Navigate to Tools → AI Assistant → MCP Servers
-3. Add new server configuration:
+**Requirements**: IntelliJ IDEA 2025.1+ or other JetBrains IDE with AI Assistant 251.26094.80.5+
+
+#### Option 1: Import from Claude (Easiest)
+1. Go to Settings | Tools | AI Assistant | Model Context Protocol (MCP)
+2. Click "Import from Claude"
+3. Select the pdfdancer-mcp server from your Claude Desktop configuration
+
+#### Option 2: Add via Settings UI
+1. Open IDE settings (Ctrl+Alt+S or Cmd+,)
+2. Navigate to Tools → AI Assistant → Model Context Protocol (MCP)
+3. Click "Add Command" or use the Add option
+4. Configure:
+   - **Name**: `pdfdancer-mcp`
+   - **Command**: `npx`
+   - **Args**: `-y @pdfdancer/pdfdancer-mcp`
+
+#### Option 3: Manual Configuration
+Add to your MCP configuration:
 
 ```json
 {
@@ -273,6 +341,8 @@ Add to your Qwen Coder MCP settings:
   }
 }
 ```
+
+**Note**: Version 2025.2+ includes built-in MCP server support for external clients.
 
 </details>
 
