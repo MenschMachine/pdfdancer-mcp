@@ -8,7 +8,7 @@
 
 Edit text in any real-world PDF. Even ones you didn't create. PDFDancer edits inbound PDFs like a real document format: paragraphs, lines, glyphs, vectors, forms, plus ML-driven font handling for missing or embedded fonts.
 
-`pdfdancer-mcp` is a Model Context Protocol (MCP) server that connects PDFDancer to MCP-compatible AI coding assistants so they can write, run, and refactor PDFDancer SDK code inside your projects (TypeScript, Python, and Java). Use it to build and maintain services, workflows, and tooling that transform PDFs you didn’t create.
+`pdfdancer-mcp` is a Model Context Protocol (MCP) server that connects PDFDancer to MCP-compatible AI coding assistants so they can write, run, and refactor PDFDancer SDK code inside your projects (TypeScript, Python, and Java). Use it to build and maintain services, workflows, and tooling that transform PDFs you didn’t create. Ideal for ingestion pipelines, document workflows, and AI agents that need to modify PDFs in production.
 
 ---
 
