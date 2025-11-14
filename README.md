@@ -1,6 +1,14 @@
+<p align="center">
+  <img src="media/logo-orange-60h.webp" alt="PDFDancer logo" height="60">
+</p>
+
 # pdfdancer-mcp
 
-A Model Context Protocol (MCP) server providing coding agents with searchable access to official PDFDancer SDK documentation. This server enables AI coding assistants to discover and retrieve comprehensive documentation for building PDF manipulation applications using PDFDancer SDKs for Python, TypeScript, and Java.
+**Add PDFDancer to your AI coding assistant**
+
+Edit text in any real-world PDF. Even ones you didn't create. PDFDancer edits inbound PDFs like a real document format: paragraphs, lines, glyphs, vectors, forms, plus ML-driven font handling for missing or embedded fonts.
+
+`pdfdancer-mcp` is a Model Context Protocol (MCP) server that connects PDFDancer to MCP-compatible AI coding assistants so they can write, run, and refactor PDFDancer SDK code inside your projects (TypeScript, Python, and Java). Use it to build and maintain services, workflows, and tooling that transform PDFs you didn’t create.
 
 ---
 
@@ -512,12 +520,11 @@ The MCP server provides the following tools for accessing PDFDancer documentatio
 
 ### Typical Workflow
 
-1. **Search for relevant topics**: Use `search-docs` with keywords like "authentication", "edit text", "add paragraph", or "forms"
-2. **Get detailed documentation**: Use `get-docs` with a route from the search results to retrieve complete documentation
-3. **Review code samples**: Use `help` to see working examples in TypeScript, Python, or Java
-4. **Implement your solution**: Apply the patterns from the documentation to build your PDF manipulation features
-
-Each tool returns both human-readable formatted output and structured content for easy integration into coding workflows.
+1. **Install the server** in your MCP-compatible client (Cursor, Claude Code, Windsurf, Zed, etc.).
+2. **Open a codebase that uses PDFDancer** (or ask your assistant to add the SDK).
+3. **Describe the behavior you want in code** – for example: "add a step that redacts email addresses in every inbound PDF", "add a function that moves this header up 20px", or "create a job that stamps a footer on all pages".
+4. **Let the agent write and refactor the code** using the PDFDancer SDKs through this MCP server, then run tests or sample PDFs.
+5. **Commit and ship your workflow** once the code and resulting PDFs behave as expected.
 
 ### Demo: Using PDFDancer MCP with Claude Code
 
