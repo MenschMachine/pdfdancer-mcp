@@ -510,13 +510,11 @@ The MCP server provides the following tools for accessing PDFDancer documentatio
 
 - **`help`** – Display comprehensive overview of PDFDancer SDK capabilities with multi-language code samples (TypeScript, Python, Java) demonstrating common PDF manipulation tasks.
 
-- **`search-docs`** – Search the official PDFDancer SDK documentation by keyword. Returns matching documentation routes with titles, content snippets, and relevance scores. Use this to find information about PDFDancer features, APIs, and usage examples.
+- **`version`** – Get the current version of the pdfdancer-mcp server.
+
+- **`search-docs`** – Search the official PDFDancer SDK documentation by keyword. Returns matching documentation routes with titles, content snippets, and relevance scores (max 10 results). Use this to find information about PDFDancer features, APIs, and usage examples.
 
 - **`get-docs`** – Retrieve the full documentation content for a specific route. After finding relevant documentation with `search-docs`, use this tool to get the complete markdown content including code examples, detailed explanations, and API references.
-
-- **`list-indexes`** – List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.
-
-- **`list-routes`** – List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval.
 
 ### Typical Workflow
 

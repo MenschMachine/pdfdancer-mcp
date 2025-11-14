@@ -47,25 +47,6 @@ interface SearchResponse extends JsonObject {
   took: number;
 }
 
-interface IndexInfo extends JsonObject {
-  tag: string;
-  key: string;
-  metadata?: Record<string, unknown>;
-}
-
-interface IndexListResponse extends JsonObject {
-  indexes: IndexInfo[];
-}
-
-interface ContentListResponse extends JsonObject {
-  files: Array<{
-    route: string;
-    size?: number;
-    updatedAt?: string;
-  }>;
-  total: number;
-}
-
 interface ContentResponse extends JsonObject {
   route: string;
   content: string;
@@ -172,11 +153,24 @@ const helpDocument: HelpDocument = {
     {
       heading: 'Available MCP Tools',
       items: [
-        '- **search-docs**: Search PDFDancer documentation by keyword to find relevant APIs and examples',
-        '- **get-docs**: Retrieve complete documentation for a specific route with code examples',
-        '- **list-indexes**: Discover available SDK versions, languages, and documentation categories',
-        '- **list-routes**: Browse all available documentation pages and guides',
-        '- **help**: Display this overview with multi-language code samples'
+        '- **help**: Display this overview with multi-language code samples',
+        '- **version**: Get the current version of the pdfdancer-mcp server',
+        '- **search-docs**: Search PDFDancer documentation by keyword to find relevant APIs and examples (max 10 results)',
+        '- **get-docs**: Retrieve complete documentation for a specific route with code examples'
+      ]
+    },
+    {
+      heading: 'Search Syntax (Lunr.js)',
+      items: [
+        '- **Simple keywords** (OR logic): `Java images add` → matches documents with ANY word',
+        '- **Require ALL words**: `+Java +images +add` → matches only documents with ALL words (recommended for precise results)',
+        '- **Exclude words**: `+React -deprecated` → must have "React", must NOT have "deprecated"',
+        '- **Boost importance**: `authentication^10 tutorial` → prioritizes "authentication" results',
+        '- **Field search**: `title:installation` → searches only in title field',
+        '- **Wildcard**: `install*` → matches "install", "installation", "installer"',
+        '- **Fuzzy search**: `javascript~2` → tolerates up to 2 character differences (typos)',
+        '- **Exact phrase**: `title:"Java images"` → searches for exact phrase in title',
+        '- **Available fields**: title, content, tags, sidebarParentCategories'
       ]
     },
     {
@@ -325,32 +319,42 @@ async function main() {
   );
 
   server.registerTool(
+    'version',
+    {
+      title: 'Get server version',
+      description: 'Returns the current version of the pdfdancer-mcp server.'
+    },
+    async () => {
+      const version = pkg.version ?? 'unknown';
+      return {
+        content: [
+          {
+            type: 'text',
+            text: `pdfdancer-mcp version: ${version}`
+          }
+        ],
+        structuredContent: { version }
+      };
+    }
+  );
+
+  server.registerTool(
     'search-docs',
     {
       title: 'Search PDFDancer documentation',
       description: 'Search the official PDFDancer SDK documentation by keyword. Returns matching documentation routes with titles, content snippets, and relevance scores. Use this to find information about PDFDancer features, APIs, and usage examples.',
       inputSchema: {
         query: z.string().min(1, 'query is required'),
-        tag: z.string().optional(),
-        maxResults: z.number().int().min(1).max(100).optional(),
-        method: z.enum(['get', 'post']).default('get')
+        maxResults: z.number().int().min(1).max(10).optional()
       }
     },
-    async ({ query, tag, maxResults, method }) => {
-      const usePost = method === 'post';
-      const payload = { query, tag, maxResults };
-      const data = usePost
-        ? await callApi<SearchResponse>('/search', {
-            method: 'POST',
-            body: payload
-          })
-        : await callApi<SearchResponse>('/search', {
-            searchParams: {
-              q: query,
-              tag,
-              maxResults
-            }
-          });
+    async ({ query, maxResults }) => {
+      const data = await callApi<SearchResponse>('/search', {
+        searchParams: {
+          q: query,
+          maxResults
+        }
+      });
 
       return {
         content: [
@@ -364,45 +368,6 @@ async function main() {
     }
   );
 
-  server.registerTool(
-    'list-indexes',
-    {
-      title: 'List available documentation indexes',
-      description: 'List all available PDFDancer documentation indexes and tags. Use this to discover which SDK versions, languages, or documentation categories are available for searching.'
-    },
-    async () => {
-      const data = await callApi<IndexListResponse>('/indexes');
-      return {
-        content: [
-          {
-            type: 'text',
-            text: formatJsonBlock('Indexes', data)
-          }
-        ],
-        structuredContent: data
-      };
-    }
-  );
-
-  server.registerTool(
-    'list-routes',
-    {
-      title: 'List all documentation routes',
-      description: 'List all available PDFDancer documentation routes. Use this to browse all documentation pages, articles, and guides available for retrieval. Returns route paths that can be used with get-docs.'
-    },
-    async () => {
-      const data = await callApi<ContentListResponse>('/list-content');
-      return {
-        content: [
-          {
-            type: 'text',
-            text: formatJsonBlock('Content files', data)
-          }
-        ],
-        structuredContent: data
-      };
-    }
-  );
 
   server.registerTool(
     'get-docs',
