@@ -318,16 +318,27 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup WSL
         uses: Vampire/setup-wsl@v3
         with:
           distribution: Ubuntu-22.04
 
-      - name: Checkout code
+      - name: Get WSL path
+        id: wsl-path
+        shell: pwsh
+        run: |
+          $wslPath = wsl wslpath "'${{ github.workspace }}'"
+          echo "path=$wslPath" >> $env:GITHUB_OUTPUT
+          echo "WSL path: $wslPath"
+
+      - name: Configure git in WSL
         shell: wsl-bash {0}
         run: |
-          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp || exit 1
-          git config --global --add safe.directory $(pwd)
+          cd "${{ steps.wsl-path.outputs.path }}"
+          git config --global --add safe.directory "$(pwd)"
 
       - name: Install Node.js in WSL
         shell: wsl-bash {0}
@@ -338,17 +349,17 @@ jobs:
       - name: Install dependencies (WSL)
         shell: wsl-bash {0}
         run: |
-          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          cd "${{ steps.wsl-path.outputs.path }}"
           npm ci
 
       - name: Build (WSL)
         shell: wsl-bash {0}
         run: |
-          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          cd "${{ steps.wsl-path.outputs.path }}"
           npm run build
 
       - name: Run E2E tests (WSL)
         shell: wsl-bash {0}
         run: |
-          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          cd "${{ steps.wsl-path.outputs.path }}"
           npm test
