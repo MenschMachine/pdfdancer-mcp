@@ -228,25 +228,16 @@ describe('NPM Package Installation Tests', () => {
         const mcptoolsPath = getMcptoolsPath();
         expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
-        // Use the locally installed package instead of downloading from npm
+        // Verify the locally installed package exists
         const localPackagePath = join(testDir, 'node_modules', '@pdfdancer', 'pdfdancer-mcp', 'dist', 'index.js');
         expect(existsSync(localPackagePath)).toBe(true);
 
-        // Find node path
-        let nodePath: string;
-        try {
-            if (process.platform === 'win32') {
-                nodePath = execSync('where.exe node', {encoding: 'utf-8'}).split('\n')[0].trim();
-            } else {
-                nodePath = execSync('which node', {encoding: 'utf-8'}).trim();
-            }
-        } catch (error) {
-            throw new Error('node not found in PATH');
-        }
+        // Use npx with --no-install to ensure it uses the locally installed package
+        const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
         // Test version command
         const versionResult = execSync(
-            `${mcptoolsPath} call version "${nodePath}" "${localPackagePath}"`,
+            `${mcptoolsPath} call version "${npxCommand}" --no-install @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir
@@ -263,7 +254,7 @@ describe('NPM Package Installation Tests', () => {
             : `'{"query":"page"}'`; // Unix: use single quotes
 
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p ${jsonParam} "${nodePath}" "${localPackagePath}"`,
+            `${mcptoolsPath} call search-docs -p ${jsonParam} "${npxCommand}" --no-install @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir
