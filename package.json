@@ -1,6 +1,6 @@
 {
   "name": "@pdfdancer/pdfdancer-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server providing coding agents with searchable access to official PDFDancer SDK documentation for building PDF manipulation applications.",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,8 +12,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
+    "test": "vitest run --exclude='**/*.package.test.ts'",
+    "test:package": "vitest run src/install.package.test.ts",
+    "test:all": "vitest run",
+    "test:watch": "vitest --exclude='**/*.package.test.ts'",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "prepublishOnly": "npm run lint && npm run build",
+    "prepublishOnly": "npm run lint && npm run test:all && npm run build",
     "publish:npm": "npm publish --access public"
   },
   "repository": {
@@ -45,12 +49,13 @@
     "access": "public"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.21.1",
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.10"
   }
 }
