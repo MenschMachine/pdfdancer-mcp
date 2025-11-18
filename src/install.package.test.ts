@@ -202,6 +202,11 @@ describe('NPM Package Installation Tests', () => {
         // Use npx.cmd on Windows, npx on Unix
         const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
+        // Construct PATH with platform-specific separator
+        const binPath = join(testDir, 'node_modules', '.bin');
+        const pathSeparator = process.platform === 'win32' ? ';' : ':';
+        const newPath = `${binPath}${pathSeparator}${process.env.PATH}`;
+
         // Test version command
         const versionResult = execSync(
             `${mcptoolsPath} call version ${npxCommand} -y @pdfdancer/pdfdancer-mcp`,
@@ -210,7 +215,7 @@ describe('NPM Package Installation Tests', () => {
                 cwd: testDir,
                 env: {
                     ...process.env,
-                    PATH: `${testDir}/node_modules/.bin:${process.env.PATH}`
+                    PATH: newPath
                 }
             }
         );
@@ -226,7 +231,7 @@ describe('NPM Package Installation Tests', () => {
                 cwd: testDir,
                 env: {
                     ...process.env,
-                    PATH: `${testDir}/node_modules/.bin:${process.env.PATH}`
+                    PATH: newPath
                 }
             }
         );
