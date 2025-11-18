@@ -44,6 +44,12 @@ jobs:
           go-version: 'stable'
           cache: false
 
+      - name: Ensure Go directories exist
+        shell: bash
+        run: |
+          mkdir -p ~/go/bin
+          mkdir -p ~/go/pkg/mod
+
       - name: Cache mcptools binary
         id: cache-mcptools
         uses: actions/cache@v4
