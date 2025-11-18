@@ -205,35 +205,28 @@ describe('NPM Package Installation Tests', () => {
         const mcptoolsPath = getMcptoolsPath();
         expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
-        // Find npx path
-        let npxPath: string;
+        // Use the locally installed package instead of downloading from npm
+        const localPackagePath = join(testDir, 'node_modules', '@pdfdancer', 'pdfdancer-mcp', 'dist', 'index.js');
+        expect(existsSync(localPackagePath)).toBe(true);
+
+        // Find node path
+        let nodePath: string;
         try {
             if (process.platform === 'win32') {
-                // On Windows, use where.exe to find npx.cmd
-                // Split first, then trim to handle Windows \r\n line endings properly
-                npxPath = execSync('where.exe npx.cmd', {encoding: 'utf-8'}).split('\n')[0].trim();
+                nodePath = execSync('where.exe node', {encoding: 'utf-8'}).split('\n')[0].trim();
             } else {
-                npxPath = execSync('which npx', {encoding: 'utf-8'}).trim();
+                nodePath = execSync('which node', {encoding: 'utf-8'}).trim();
             }
         } catch (error) {
-            throw new Error('npx not found in PATH');
+            throw new Error('node not found in PATH');
         }
-
-        // Construct PATH with platform-specific separator
-        const binPath = join(testDir, 'node_modules', '.bin');
-        const pathSeparator = process.platform === 'win32' ? ';' : ':';
-        const newPath = `${binPath}${pathSeparator}${process.env.PATH}`;
 
         // Test version command
         const versionResult = execSync(
-            `${mcptoolsPath} call version "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call version "${nodePath}" "${localPackagePath}"`,
             {
                 encoding: 'utf-8',
-                cwd: testDir,
-                env: {
-                    ...process.env,
-                    PATH: newPath
-                }
+                cwd: testDir
             }
         );
 
@@ -247,14 +240,10 @@ describe('NPM Package Installation Tests', () => {
             : `'{"query":"page"}'`; // Unix: use single quotes
 
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p ${jsonParam} "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call search-docs -p ${jsonParam} "${nodePath}" "${localPackagePath}"`,
             {
                 encoding: 'utf-8',
-                cwd: testDir,
-                env: {
-                    ...process.env,
-                    PATH: newPath
-                }
+                cwd: testDir
             }
         );
 
