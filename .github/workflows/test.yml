@@ -38,6 +38,14 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - name: Install mcptools
+        run: go install github.com/f/mcptools/cmd/mcptools@latest
+
       - name: Run package installation tests
         run: npm run test:package
 
