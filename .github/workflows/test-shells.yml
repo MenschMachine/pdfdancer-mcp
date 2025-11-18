@@ -37,7 +37,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dash if needed
-        if: matrix.shell == 'dash'
+        if: ${{ matrix.shell == 'dash' }}
         run: sudo apt-get update && sudo apt-get install -y dash
 
       - name: Install dependencies
@@ -80,7 +80,7 @@ jobs:
           cache: 'npm'
 
       - name: Install PowerShell Core
-        if: matrix.shell == 'pwsh'
+        if: ${{ matrix.shell == 'pwsh' }}
         shell: powershell
         run: |
           if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
@@ -100,7 +100,7 @@ jobs:
         run: npm test
 
       - name: Test npx execution (PowerShell)
-        if: matrix.shell == 'powershell' || matrix.shell == 'pwsh'
+        if: ${{ matrix.shell == 'powershell' || matrix.shell == 'pwsh' }}
         shell: ${{ matrix.shell }}
         run: |
           $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru
@@ -108,7 +108,7 @@ jobs:
           Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
 
       - name: Test npx execution (CMD)
-        if: matrix.shell == 'cmd'
+        if: ${{ matrix.shell == 'cmd' }}
         shell: cmd
         run: |
           start /B npx -y tsx src/index.ts
