@@ -199,8 +199,18 @@ describe('NPM Package Installation Tests', () => {
         const mcptoolsPath = getMcptoolsPath();
         expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
-        // Use npx.cmd on Windows, npx on Unix
-        const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+        // Find npx path
+        let npxPath: string;
+        try {
+            if (process.platform === 'win32') {
+                // On Windows, use where.exe to find npx.cmd
+                npxPath = execSync('where.exe npx.cmd', {encoding: 'utf-8'}).trim().split('\n')[0];
+            } else {
+                npxPath = execSync('which npx', {encoding: 'utf-8'}).trim();
+            }
+        } catch (error) {
+            throw new Error('npx not found in PATH');
+        }
 
         // Construct PATH with platform-specific separator
         const binPath = join(testDir, 'node_modules', '.bin');
@@ -209,7 +219,7 @@ describe('NPM Package Installation Tests', () => {
 
         // Test version command
         const versionResult = execSync(
-            `${mcptoolsPath} call version ${npxCommand} -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call version "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir,
@@ -225,7 +235,7 @@ describe('NPM Package Installation Tests', () => {
 
         // Test search-docs command with JSON output
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p '{"query":"page"}' ${npxCommand} -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call search-docs -p '{"query":"page"}' "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir,
