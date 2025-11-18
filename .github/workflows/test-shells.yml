@@ -1,0 +1,188 @@
+name: Shell Environment Tests
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-unix-shells:
+    name: Test ${{ matrix.shell }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        shell: [bash, sh]
+        node-version: [18, 22]
+        include:
+          # Test zsh on macOS (default shell)
+          - os: macos-latest
+            shell: zsh
+            node-version: 22
+          # Test dash on Ubuntu (common in minimal environments)
+          - os: ubuntu-latest
+            shell: dash
+            node-version: 22
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dash if needed
+        if: matrix.shell == 'dash'
+        run: sudo apt-get update && sudo apt-get install -y dash
+
+      - name: Install dependencies
+        shell: ${{ matrix.shell }} {0}
+        run: npm ci
+
+      - name: Build
+        shell: ${{ matrix.shell }} {0}
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: ${{ matrix.shell }} {0}
+        run: npm test
+
+      - name: Test npx execution
+        shell: ${{ matrix.shell }} {0}
+        run: |
+          npx -y tsx src/index.ts &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID || true
+
+  test-windows-shells:
+    name: Test ${{ matrix.shell }} on Windows
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        shell: [powershell, pwsh, cmd]
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install PowerShell Core
+        if: matrix.shell == 'pwsh'
+        shell: powershell
+        run: |
+          if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
+            winget install --id Microsoft.Powershell --source winget --silent
+          }
+
+      - name: Install dependencies
+        shell: ${{ matrix.shell }}
+        run: npm ci
+
+      - name: Build
+        shell: ${{ matrix.shell }}
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: ${{ matrix.shell }}
+        run: npm test
+
+      - name: Test npx execution (PowerShell)
+        if: matrix.shell == 'powershell' || matrix.shell == 'pwsh'
+        shell: ${{ matrix.shell }}
+        run: |
+          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru
+          Start-Sleep -Seconds 2
+          Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+
+      - name: Test npx execution (CMD)
+        if: matrix.shell == 'cmd'
+        shell: cmd
+        run: |
+          start /B npx -y tsx src/index.ts
+          timeout /t 2 /nobreak
+          taskkill /F /IM node.exe /FI "WINDOWTITLE eq npx*" || exit 0
+
+  test-git-bash:
+    name: Test Git Bash on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        shell: bash
+        run: npm ci
+
+      - name: Build
+        shell: bash
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: bash
+        run: npm test
+
+      - name: Test npx execution
+        shell: bash
+        run: |
+          npx -y tsx src/index.ts &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID || true
+
+  test-wsl:
+    name: Test WSL (Ubuntu) on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Setup WSL
+        uses: Vampire/setup-wsl@v3
+        with:
+          distribution: Ubuntu-22.04
+
+      - name: Checkout code (WSL)
+        shell: wsl-bash {0}
+        run: |
+          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp || exit 1
+          git config --global --add safe.directory $(pwd)
+
+      - name: Install Node.js in WSL
+        shell: wsl-bash {0}
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+      - name: Install dependencies (WSL)
+        shell: wsl-bash {0}
+        run: |
+          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          npm ci
+
+      - name: Build (WSL)
+        shell: wsl-bash {0}
+        run: |
+          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          npm run build
+
+      - name: Run E2E tests (WSL)
+        shell: wsl-bash {0}
+        run: |
+          cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp
+          npm test

@@ -12,8 +12,10 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
-    "test": "vitest run --exclude='**/*.package.test.ts'",
+    "test": "vitest run --exclude='**/*.package.test.ts' --exclude='**/*.environment.test.ts'",
     "test:package": "vitest run src/install.package.test.ts",
+    "test:shells": "vitest run src/shell.environment.test.ts",
+    "test:shells:docker": "./test/run-shell-tests.sh",
     "test:all": "vitest run",
     "test:watch": "vitest --exclude='**/*.package.test.ts'",
     "lint": "tsc -p tsconfig.json --noEmit",
