@@ -12,10 +12,12 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "dev": "tsx src/index.ts",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "vitest run --exclude='**/*.package.test.ts'",
+    "test:package": "vitest run src/install.package.test.ts",
+    "test:all": "vitest run",
+    "test:watch": "vitest --exclude='**/*.package.test.ts'",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "prepublishOnly": "npm run lint && npm run test:all && npm run build",
     "publish:npm": "npm publish --access public"
   },
   "repository": {
@@ -47,10 +49,10 @@
     "access": "public"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@modelcontextprotocol/sdk": "^1.22.0",
     "@types/node": "^24.10.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",

@@ -37,6 +37,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run package installation tests
+        run: npm run test:package
+
   test-summary:
     name: Test Summary
     runs-on: ubuntu-latest
