@@ -8,11 +8,12 @@ on:
 
 jobs:
   test:
-    name: Test (Node ${{ matrix.node-version }})
-    runs-on: ubuntu-latest
+    name: Test (Node ${{ matrix.node-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         node-version: [18, 20, 22]
+        os: [ubuntu-latest, windows-latest]
       fail-fast: false
 
     steps:
@@ -49,7 +50,7 @@ jobs:
       - name: Check test results
         run: |
           if [ "${{ needs.test.result }}" == "failure" ]; then
-            echo "Tests failed on one or more Node versions"
+            echo "Tests failed on one or more configurations"
             exit 1
           fi
-          echo "All tests passed across all Node versions!"
+          echo "All tests passed across all Node versions and platforms!"
