@@ -2,7 +2,6 @@ import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 import type {TextContent} from '@modelcontextprotocol/sdk/types.js';
-import {spawn} from 'child_process';
 import {fileURLToPath} from 'url';
 import {dirname, join} from 'path';
 
@@ -16,21 +15,15 @@ describe('PDFDancer MCP Server E2E Tests', () => {
     beforeAll(async () => {
         // Spawn the server process
         const serverPath = join(__dirname, 'index.ts');
-        const serverProcess = spawn('tsx', [serverPath], {
-            stdio: ['pipe', 'pipe', 'pipe'],
-            env: {
-                ...process.env,
-                // Use a test base URL or the default
-                PDFDANCER_DOCS_BASE_URL:
-                    process.env.PDFDANCER_DOCS_BASE_URL ||
-                    'https://docusaurus-cloudflare-search.michael-lahr-0b0.workers.dev/'
-            }
-        });
+
+        // Use npx for cross-platform compatibility (works on Windows and Unix)
+        const isWindows = process.platform === 'win32';
+        const command = isWindows ? 'npx.cmd' : 'npx';
 
         // Create transport and client
         transport = new StdioClientTransport({
-            command: 'tsx',
-            args: [serverPath],
+            command,
+            args: ['tsx', serverPath],
             env: {
                 ...process.env,
                 PDFDANCER_DOCS_BASE_URL:
