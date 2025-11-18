@@ -187,8 +187,7 @@ function renderHelpDocument(doc: HelpDocument): string {
 async function main() {
     const server = new McpServer({
         name: 'pdfdancer-mcp',
-        version: pkg.version ?? '0.0.0',
-        description: 'MCP server providing searchable access to PDFDancer SDK documentation'
+        version: pkg.version ?? '0.0.0'
     });
 
     server.registerTool(
@@ -202,7 +201,7 @@ async function main() {
             return {
                 content: [
                     {
-                        type: 'text',
+                        type: 'text' as const,
                         text
                     }
                 ],
@@ -222,7 +221,7 @@ async function main() {
             return {
                 content: [
                     {
-                        type: 'text',
+                        type: 'text' as const,
                         text: `pdfdancer-mcp version: ${version}`
                     }
                 ],
@@ -252,7 +251,7 @@ async function main() {
             return {
                 content: [
                     {
-                        type: 'text',
+                        type: 'text' as const,
                         text: `${summarizeSearchResponse(data)}\n\n${formatJsonBlock('Raw search response', data)}`
                     }
                 ],
@@ -281,11 +280,11 @@ async function main() {
             return {
                 content: [
                     {
-                        type: 'text',
+                        type: 'text' as const,
                         text: formatJsonBlock(`Content for ${route}`, data)
                     },
                     {
-                        type: 'text',
+                        type: 'text' as const,
                         text: data.content
                     }
                 ],

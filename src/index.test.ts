@@ -1,6 +1,7 @@
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
+import type {TextContent} from '@modelcontextprotocol/sdk/types.js';
 import {spawn} from 'child_process';
 import {fileURLToPath} from 'url';
 import {dirname, join} from 'path';
@@ -80,13 +81,14 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 arguments: {}
             });
 
-            expect(result.content).toBeDefined();
-            expect(result.content.length).toBeGreaterThan(0);
-            expect(result.content[0].type).toBe('text');
+            const content = result.content as TextContent[];
+            expect(content).toBeDefined();
+            expect(content.length).toBeGreaterThan(0);
+            expect(content[0].type).toBe('text');
 
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('PDFDancer SDK Documentation');
-                expect(result.content[0].text).toContain('Available MCP Tools');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('PDFDancer SDK Documentation');
+                expect(content[0].text).toContain('Available MCP Tools');
             }
 
             expect(result.structuredContent).toBeDefined();
@@ -100,13 +102,14 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 arguments: {}
             });
 
-            expect(result.content).toBeDefined();
-            expect(result.content.length).toBeGreaterThan(0);
-            expect(result.content[0].type).toBe('text');
+            const content = result.content as TextContent[];
+            expect(content).toBeDefined();
+            expect(content.length).toBeGreaterThan(0);
+            expect(content[0].type).toBe('text');
 
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('pdfdancer-mcp version:');
-                expect(result.content[0].text).toContain('0.1.1');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('pdfdancer-mcp version:');
+                expect(content[0].text).toContain('0.1.1');
             }
 
             expect(result.structuredContent).toBeDefined();
@@ -123,13 +126,14 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 }
             });
 
-            expect(result.content).toBeDefined();
-            expect(result.content.length).toBeGreaterThan(0);
-            expect(result.content[0].type).toBe('text');
+            const content = result.content as TextContent[];
+            expect(content).toBeDefined();
+            expect(content.length).toBeGreaterThan(0);
+            expect(content[0].type).toBe('text');
 
-            if (result.content[0].type === 'text') {
+            if (content[0].type === 'text') {
                 // May fail due to network issues, so check for either success or fetch error
-                const text = result.content[0].text;
+                const text = content[0].text;
                 const hasResults = text.includes('result(s) for "authentication"');
                 const hasNetworkError = text.includes('fetch failed') || text.includes('Request to');
                 expect(hasResults || hasNetworkError).toBe(true);
@@ -167,7 +171,8 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 expect(structured.results.length).toBeLessThanOrEqual(3);
             } else {
                 // Network error is acceptable in tests
-                expect(result.content[0].type).toBe('text');
+                const content = result.content as TextContent[];
+                expect(content[0].type).toBe('text');
             }
         });
 
@@ -179,9 +184,10 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 }
             });
 
-            expect(result.content[0].type).toBe('text');
-            if (result.content[0].type === 'text') {
-                const text = result.content[0].text;
+            const content = result.content as TextContent[];
+            expect(content[0].type).toBe('text');
+            if (content[0].type === 'text') {
+                const text = content[0].text;
                 const hasNoMatches = text.includes('No matches');
                 const hasNetworkError = text.includes('fetch failed') || text.includes('Request to');
                 expect(hasNoMatches || hasNetworkError).toBe(true);
@@ -204,7 +210,8 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 expect(structured.query).toBe('+Java +images');
             } else {
                 // Network error is acceptable
-                expect(result.content[0].type).toBe('text');
+                const content = result.content as TextContent[];
+                expect(content[0].type).toBe('text');
             }
         });
     });
@@ -219,8 +226,9 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 }
             });
 
-            expect(result.content).toBeDefined();
-            expect(result.content.length).toBeGreaterThan(0);
+            const content = result.content as TextContent[];
+            expect(content).toBeDefined();
+            expect(content.length).toBeGreaterThan(0);
 
             // Only check structured content if API call succeeded
             if (result.structuredContent) {
@@ -233,7 +241,7 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 expect(structured.route).toBe('/docs/intro');
             } else {
                 // Network error is acceptable
-                expect(result.content[0].type).toBe('text');
+                expect(content[0].type).toBe('text');
             }
         });
 
@@ -246,10 +254,11 @@ describe('PDFDancer MCP Server E2E Tests', () => {
             });
 
             // MCP SDK returns errors in structured format
+            const content = result.content as TextContent[];
             expect(result.isError).toBe(true);
-            expect(result.content[0].type).toBe('text');
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('route must start with /');
+            expect(content[0].type).toBe('text');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('route must start with /');
             }
         });
     });
@@ -262,11 +271,12 @@ describe('PDFDancer MCP Server E2E Tests', () => {
             });
 
             // MCP SDK returns errors in structured format
+            const content = result.content as TextContent[];
             expect(result.isError).toBe(true);
-            expect(result.content[0].type).toBe('text');
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('nonexistent-tool');
-                expect(result.content[0].text).toContain('not found');
+            expect(content[0].type).toBe('text');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('nonexistent-tool');
+                expect(content[0].text).toContain('not found');
             }
         });
 
@@ -277,11 +287,12 @@ describe('PDFDancer MCP Server E2E Tests', () => {
             });
 
             // MCP SDK returns errors in structured format
+            const content = result.content as TextContent[];
             expect(result.isError).toBe(true);
-            expect(result.content[0].type).toBe('text');
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('query');
-                expect(result.content[0].text).toContain('Required');
+            expect(content[0].type).toBe('text');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('query');
+                expect(content[0].text).toContain('Required');
             }
         });
 
@@ -295,11 +306,12 @@ describe('PDFDancer MCP Server E2E Tests', () => {
             });
 
             // MCP SDK returns errors in structured format
+            const content = result.content as TextContent[];
             expect(result.isError).toBe(true);
-            expect(result.content[0].type).toBe('text');
-            if (result.content[0].type === 'text') {
-                expect(result.content[0].text).toContain('maxResults');
-                expect(result.content[0].text).toContain('number');
+            expect(content[0].type).toBe('text');
+            if (content[0].type === 'text') {
+                expect(content[0].text).toContain('maxResults');
+                expect(content[0].text).toContain('number');
             }
         });
     });
@@ -324,9 +336,10 @@ describe('PDFDancer MCP Server E2E Tests', () => {
                 expect(typeof structured.took).toBe('number');
             } else {
                 // Network error is acceptable in tests
-                expect(result.content[0].type).toBe('text');
-                if (result.content[0].type === 'text') {
-                    const text = result.content[0].text;
+                const content = result.content as TextContent[];
+                expect(content[0].type).toBe('text');
+                if (content[0].type === 'text') {
+                    const text = content[0].text;
                     const hasNetworkError = text.includes('fetch failed') || text.includes('Request to');
                     expect(hasNetworkError).toBe(true);
                 }
