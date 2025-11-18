@@ -2,8 +2,10 @@
 import {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js';
 import {StdioServerTransport} from '@modelcontextprotocol/sdk/server/stdio.js';
 import {z} from 'zod';
-import packageJson from '../package.json' with {type: 'json'};
+import {createRequire} from 'module';
 
+const require = createRequire(import.meta.url);
+const packageJson = require('../package.json');
 const pkg = packageJson as { version?: string };
 const rawBaseUrl =
     process.env.PDFDANCER_DOCS_BASE_URL ??
