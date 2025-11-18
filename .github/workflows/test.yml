@@ -42,8 +42,17 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: 'stable'
+          cache-dependency-path: '**/*.sum'
+
+      - name: Cache mcptools binary
+        id: cache-mcptools
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin
+          key: ${{ runner.os }}-mcptools-${{ hashFiles('**/test.yml') }}
 
       - name: Install mcptools
+        if: steps.cache-mcptools.outputs.cache-hit != 'true'
         run: go install github.com/f/mcptools/cmd/mcptools@latest
 
       - name: Run package installation tests
