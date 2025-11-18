@@ -62,10 +62,29 @@ describe('NPM Package Installation Tests', () => {
         console.log(`Created tarball: ${tarballPath}`);
     }, 120000); // 2 minute timeout for build
 
-    afterAll(() => {
-        // Cleanup test directory
+    afterAll(async () => {
+        // Cleanup test directory with retry for Windows file locking issues
         if (testDir) {
-            rmSync(testDir, {recursive: true, force: true});
+            let retries = 5;
+            let lastError: Error | null = null;
+
+            while (retries > 0) {
+                try {
+                    rmSync(testDir, {recursive: true, force: true});
+                    break;
+                } catch (error) {
+                    lastError = error as Error;
+                    retries--;
+                    if (retries > 0) {
+                        // Wait a bit before retrying (Windows needs time to release file handles)
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                    }
+                }
+            }
+
+            if (retries === 0 && lastError) {
+                console.warn(`Failed to cleanup test directory after 5 retries: ${lastError.message}`);
+            }
         }
     });
 
@@ -152,8 +171,12 @@ describe('NPM Package Installation Tests', () => {
             expect(Array.isArray(result.content)).toBe(true);
 
             await client.close();
+            // Give the process time to fully close on Windows
+            await new Promise(resolve => setTimeout(resolve, 100));
         } catch (error) {
             await client.close();
+            // Give the process time to fully close on Windows
+            await new Promise(resolve => setTimeout(resolve, 100));
             throw error;
         }
     }, 30000);
