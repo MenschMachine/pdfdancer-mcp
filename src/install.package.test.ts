@@ -6,6 +6,24 @@ import {join, resolve} from 'path';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 
+// Check if mcptools is available
+function getMcptoolsPath(): string | null {
+    try {
+        return execSync('which mcptools', {encoding: 'utf-8'}).trim();
+    } catch {
+        try {
+            const gopath = execSync('go env GOPATH', {encoding: 'utf-8'}).trim();
+            const mcptoolsPath = join(gopath, 'bin', 'mcptools');
+            if (existsSync(mcptoolsPath)) {
+                return mcptoolsPath;
+            }
+        } catch {
+            // Go not installed
+        }
+        return null;
+    }
+}
+
 describe('NPM Package Installation Tests', () => {
     let testDir: string;
     let tarballPath: string;
@@ -178,20 +196,8 @@ describe('NPM Package Installation Tests', () => {
     });
 
     it('should work with mcptools CLI (third-party MCP client)', () => {
-        // Check if mcptools is available
-        let mcptoolsPath: string;
-        try {
-            mcptoolsPath = execSync('which mcptools', {encoding: 'utf-8'}).trim();
-        } catch {
-            // Try GOPATH/bin
-            const gopath = execSync('go env GOPATH', {encoding: 'utf-8'}).trim();
-            mcptoolsPath = join(gopath, 'bin', 'mcptools');
-
-            if (!existsSync(mcptoolsPath)) {
-                console.warn('mcptools not found, skipping test');
-                return; // Skip test if mcptools is not installed
-            }
-        }
+        const mcptoolsPath = getMcptoolsPath();
+        expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
         // Test version command
         const versionResult = execSync(
