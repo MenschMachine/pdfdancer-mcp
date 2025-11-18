@@ -199,9 +199,12 @@ describe('NPM Package Installation Tests', () => {
         const mcptoolsPath = getMcptoolsPath();
         expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
+        // Use npx.cmd on Windows, npx on Unix
+        const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+
         // Test version command
         const versionResult = execSync(
-            `${mcptoolsPath} call version npx -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call version ${npxCommand} -y @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir,
@@ -217,7 +220,7 @@ describe('NPM Package Installation Tests', () => {
 
         // Test search-docs command with JSON output
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p '{"query":"page"}' npx -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call search-docs -p '{"query":"page"}' ${npxCommand} -y @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir,
