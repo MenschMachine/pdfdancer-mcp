@@ -1,0 +1,173 @@
+# Multi-stage Dockerfile for testing across different shell environments
+# Usage: docker build -f test/Dockerfile.shells --target <stage-name> .
+
+# ============================================================================
+# Stage 1: Base image with Node.js and common tools
+# ============================================================================
+FROM node:22-alpine AS base
+WORKDIR /app
+
+# Install common dependencies
+RUN apk add --no-cache \
+    bash \
+    git \
+    curl
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# ============================================================================
+# Stage 2: Alpine with multiple shells
+# ============================================================================
+FROM base AS alpine-multi-shell
+
+# Install various shells
+RUN apk add --no-cache \
+    bash \
+    dash \
+    zsh \
+    fish
+
+# Test script that runs tests in each shell
+RUN echo '#!/bin/sh\n\
+set -e\n\
+echo "Testing in sh..."\n\
+sh -c "npm test"\n\
+echo "Testing in bash..."\n\
+bash -c "npm test"\n\
+echo "Testing in dash..."\n\
+dash -c "npm test"\n\
+echo "Testing in zsh..."\n\
+zsh -c "npm test"\n\
+echo "Testing in fish..."\n\
+fish -c "npm test"\n\
+' > /test-all-shells.sh && chmod +x /test-all-shells.sh
+
+CMD ["/test-all-shells.sh"]
+
+# ============================================================================
+# Stage 3: Debian with bash variants
+# ============================================================================
+FROM node:22-bullseye AS debian-shells
+
+WORKDIR /app
+
+# Install various shells
+RUN apt-get update && apt-get install -y \
+    bash \
+    dash \
+    zsh \
+    ksh \
+    fish \
+    tcsh \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+CMD ["bash", "-c", "npm test"]
+
+# ============================================================================
+# Stage 4: Ubuntu with restricted permissions (simulating limited environments)
+# ============================================================================
+FROM node:22-slim AS ubuntu-restricted
+
+WORKDIR /app
+
+# Create non-root user with limited permissions
+RUN useradd -m -s /bin/bash testuser && \
+    mkdir -p /app && \
+    chown testuser:testuser /app
+
+USER testuser
+
+COPY --chown=testuser:testuser package*.json ./
+RUN npm ci
+
+COPY --chown=testuser:testuser . .
+RUN npm run build
+
+CMD ["npm", "test"]
+
+# ============================================================================
+# Stage 5: Minimal environment (sh only, no bash)
+# ============================================================================
+FROM node:22-alpine AS minimal-shell
+
+WORKDIR /app
+
+# Remove bash, use only /bin/sh
+RUN apk del bash || true
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Verify bash is not available
+RUN ! which bash
+
+CMD ["/bin/sh", "-c", "npm test"]
+
+# ============================================================================
+# Stage 6: Environment with unusual locale settings
+# ============================================================================
+FROM node:22-slim AS locale-testing
+
+WORKDIR /app
+
+# Install locale packages
+RUN apt-get update && apt-get install -y locales && \
+    rm -rf /var/lib/apt/lists/*
+
+# Generate various locales
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    sed -i '/ja_JP.UTF-8/s/^# //g' /etc/locale.gen && \
+    sed -i '/de_DE.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# Test with different locales
+RUN echo '#!/bin/bash\n\
+set -e\n\
+echo "Testing with en_US.UTF-8..."\n\
+LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 npm test\n\
+echo "Testing with ja_JP.UTF-8..."\n\
+LANG=ja_JP.UTF-8 LC_ALL=ja_JP.UTF-8 npm test\n\
+echo "Testing with C locale..."\n\
+LANG=C LC_ALL=C npm test\n\
+' > /test-locales.sh && chmod +x /test-locales.sh
+
+CMD ["/test-locales.sh"]
+
+# ============================================================================
+# Stage 7: CI/CD simulation (non-interactive, no TTY)
+# ============================================================================
+FROM node:22-alpine AS ci-simulation
+
+WORKDIR /app
+
+ENV CI=true
+ENV TERM=dumb
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY package*.json ./
+RUN npm ci --no-progress
+
+COPY . .
+RUN npm run build
+
+# Run without interactive terminal
+CMD ["sh", "-c", "npm test < /dev/null"]
