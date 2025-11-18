@@ -7,23 +7,13 @@ on:
     branches: [main]
 
 jobs:
-  test-unix-shells:
-    name: Test ${{ matrix.shell }} on ${{ matrix.os }}
+  test-bash:
+    name: Test bash on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
-        shell: [bash, sh]
         node-version: [18, 22]
-        include:
-          # Test zsh on macOS (default shell)
-          - os: macos-latest
-            shell: zsh
-            node-version: 22
-          # Test dash on Ubuntu (common in minimal environments)
-          - os: ubuntu-latest
-            shell: dash
-            node-version: 22
       fail-fast: false
 
     steps:
@@ -36,36 +26,32 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Install dash if needed
-        if: ${{ matrix.shell == 'dash' }}
-        run: sudo apt-get update && sudo apt-get install -y dash
-
       - name: Install dependencies
-        shell: ${{ matrix.shell }} {0}
+        shell: bash
         run: npm ci
 
       - name: Build
-        shell: ${{ matrix.shell }} {0}
+        shell: bash
         run: npm run build
 
       - name: Run E2E tests
-        shell: ${{ matrix.shell }} {0}
+        shell: bash
         run: npm test
 
       - name: Test npx execution
-        shell: ${{ matrix.shell }} {0}
+        shell: bash
         run: |
           npx -y tsx src/index.ts &
           SERVER_PID=$!
           sleep 2
           kill $SERVER_PID || true
 
-  test-windows-shells:
-    name: Test ${{ matrix.shell }} on Windows
-    runs-on: windows-latest
+  test-sh:
+    name: Test sh on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        shell: [powershell, pwsh, cmd]
+        os: [ubuntu-latest, macos-latest]
         node-version: [18, 22]
       fail-fast: false
 
@@ -79,53 +65,232 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      - name: Install PowerShell Core
-        if: ${{ matrix.shell == 'pwsh' }}
-        shell: powershell
-        run: |
-          if (-not (Get-Command pwsh -ErrorAction SilentlyContinue)) {
-            winget install --id Microsoft.Powershell --source winget --silent
-          }
-
       - name: Install dependencies
-        shell: ${{ matrix.shell }}
+        shell: sh
         run: npm ci
 
       - name: Build
-        shell: ${{ matrix.shell }}
+        shell: sh
         run: npm run build
 
       - name: Run E2E tests
-        shell: ${{ matrix.shell }}
+        shell: sh
         run: npm test
 
-      - name: Test npx execution (PowerShell)
-        if: ${{ matrix.shell == 'powershell' || matrix.shell == 'pwsh' }}
-        shell: ${{ matrix.shell }}
+      - name: Test npx execution
+        shell: sh
         run: |
-          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru
-          Start-Sleep -Seconds 2
-          Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+          npx -y tsx src/index.ts &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID || true
 
-      - name: Test npx execution (CMD)
-        if: ${{ matrix.shell == 'cmd' }}
-        shell: cmd
-        run: |
-          start /B npx -y tsx src/index.ts
-          timeout /t 2 /nobreak
-          taskkill /F /IM node.exe /FI "WINDOWTITLE eq npx*" || exit 0
+  test-zsh-macos:
+    name: Test zsh on macOS (Node ${{ matrix.node-version }})
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
 
-  test-git-bash:
-    name: Test Git Bash on Windows
-    runs-on: windows-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        shell: zsh {0}
+        run: npm ci
+
+      - name: Build
+        shell: zsh {0}
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: zsh {0}
+        run: npm test
+
+      - name: Test npx execution
+        shell: zsh {0}
+        run: |
+          npx -y tsx src/index.ts &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID || true
+
+  test-dash-ubuntu:
+    name: Test dash on Ubuntu (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dash
+        run: sudo apt-get update && sudo apt-get install -y dash
+
+      - name: Install dependencies
+        shell: dash {0}
+        run: npm ci
+
+      - name: Build
+        shell: dash {0}
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: dash {0}
+        run: npm test
+
+      - name: Test npx execution
+        shell: dash {0}
+        run: |
+          npx -y tsx src/index.ts &
+          SERVER_PID=$!
+          sleep 2
+          kill $SERVER_PID || true
+
+  test-powershell:
+    name: Test PowerShell on Windows (Node ${{ matrix.node-version }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        shell: powershell
+        run: npm ci
+
+      - name: Build
+        shell: powershell
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: powershell
+        run: npm test
+
+      - name: Test npx execution
+        shell: powershell
+        run: |
+          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow
+          Start-Sleep -Seconds 2
+          Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+
+  test-pwsh:
+    name: Test PowerShell Core on Windows (Node ${{ matrix.node-version }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        shell: pwsh
+        run: npm ci
+
+      - name: Build
+        shell: pwsh
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: pwsh
+        run: npm test
+
+      - name: Test npx execution
+        shell: pwsh
+        run: |
+          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow
+          Start-Sleep -Seconds 2
+          Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+
+  test-cmd:
+    name: Test CMD on Windows (Node ${{ matrix.node-version }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        shell: cmd
+        run: npm ci
+
+      - name: Build
+        shell: cmd
+        run: npm run build
+
+      - name: Run E2E tests
+        shell: cmd
+        run: npm test
+
+      - name: Test npx execution
+        shell: cmd
+        run: |
+          start /B npx -y tsx src/index.ts
+          timeout /t 2 /nobreak
+          taskkill /F /IM node.exe /FI "WINDOWTITLE eq npx*" 2>nul || exit 0
+
+  test-git-bash:
+    name: Test Git Bash on Windows (Node ${{ matrix.node-version }})
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        node-version: [18, 22]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -149,15 +314,16 @@ jobs:
           kill $SERVER_PID || true
 
   test-wsl:
-    name: Test WSL (Ubuntu) on Windows
+    name: Test WSL (Ubuntu) on Windows (Node 22)
     runs-on: windows-latest
+
     steps:
       - name: Setup WSL
         uses: Vampire/setup-wsl@v3
         with:
           distribution: Ubuntu-22.04
 
-      - name: Checkout code (WSL)
+      - name: Checkout code
         shell: wsl-bash {0}
         run: |
           cd /mnt/c/actions-runner/_work/pdfdancer-mcp/pdfdancer-mcp || exit 1
