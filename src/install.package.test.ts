@@ -241,8 +241,13 @@ describe('NPM Package Installation Tests', () => {
         expect(versionResult).toContain('0.1.1');
 
         // Test search-docs command with JSON output
+        // Note: Windows cmd.exe doesn't recognize single quotes as string delimiters
+        const jsonParam = process.platform === 'win32'
+            ? `"{\\\"query\\\":\\\"page\\\"}"` // Windows: use double quotes with escaping
+            : `'{"query":"page"}'`; // Unix: use single quotes
+
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p '{"query":"page"}' "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call search-docs -p ${jsonParam} "${npxPath}" -y @pdfdancer/pdfdancer-mcp`,
             {
                 encoding: 'utf-8',
                 cwd: testDir,
