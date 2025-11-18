@@ -197,7 +197,7 @@ jobs:
       - name: Test npx execution
         shell: powershell
         run: |
-          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow
+          $process = Start-Process cmd.exe -ArgumentList "/c", "npx", "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow -WindowStyle Hidden
           Start-Sleep -Seconds 2
           Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
 
@@ -234,7 +234,7 @@ jobs:
       - name: Test npx execution
         shell: pwsh
         run: |
-          $process = Start-Process npx -ArgumentList "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow
+          $process = Start-Process cmd.exe -ArgumentList "/c", "npx", "-y", "tsx", "src/index.ts" -PassThru -NoNewWindow -WindowStyle Hidden
           Start-Sleep -Seconds 2
           Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
 
