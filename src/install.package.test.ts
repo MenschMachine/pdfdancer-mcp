@@ -176,4 +176,63 @@ describe('NPM Package Installation Tests', () => {
         // Should NOT have node_modules
         expect(installedFiles).not.toContain('node_modules');
     });
+
+    it('should work with mcptools CLI (third-party MCP client)', () => {
+        // Check if mcptools is available
+        let mcptoolsPath: string;
+        try {
+            mcptoolsPath = execSync('which mcptools', {encoding: 'utf-8'}).trim();
+        } catch {
+            // Try GOPATH/bin
+            const gopath = execSync('go env GOPATH', {encoding: 'utf-8'}).trim();
+            mcptoolsPath = join(gopath, 'bin', 'mcptools');
+
+            if (!existsSync(mcptoolsPath)) {
+                console.warn('mcptools not found, skipping test');
+                return; // Skip test if mcptools is not installed
+            }
+        }
+
+        // Test version command
+        const versionResult = execSync(
+            `${mcptoolsPath} call version npx -y @pdfdancer/pdfdancer-mcp`,
+            {
+                encoding: 'utf-8',
+                cwd: testDir,
+                env: {
+                    ...process.env,
+                    PATH: `${testDir}/node_modules/.bin:${process.env.PATH}`
+                }
+            }
+        );
+
+        expect(versionResult).toContain('pdfdancer-mcp version:');
+        expect(versionResult).toContain('0.1.1');
+
+        // Test search-docs command with JSON output
+        const searchResult = execSync(
+            `${mcptoolsPath} call search-docs -p '{"query":"page"}' npx -y @pdfdancer/pdfdancer-mcp`,
+            {
+                encoding: 'utf-8',
+                cwd: testDir,
+                env: {
+                    ...process.env,
+                    PATH: `${testDir}/node_modules/.bin:${process.env.PATH}`
+                }
+            }
+        );
+
+        // Should contain search results or network error
+        const hasResults = searchResult.includes('result(s) for "page"');
+        const hasNetworkError =
+            searchResult.includes('fetch failed') || searchResult.includes('Request to');
+
+        expect(hasResults || hasNetworkError).toBe(true);
+
+        // If results exist, verify structure
+        if (hasResults) {
+            expect(searchResult).toContain('Raw search response');
+            expect(searchResult).toContain('"query": "page"');
+        }
+    }, 60000);
 });
