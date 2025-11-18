@@ -9,11 +9,17 @@ import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 // Check if mcptools is available
 function getMcptoolsPath(): string | null {
     try {
-        return execSync('which mcptools', {encoding: 'utf-8'}).trim();
+        // Use platform-specific command to find mcptools
+        if (process.platform === 'win32') {
+            // On Windows, where.exe returns Windows native paths
+            return execSync('where.exe mcptools', {encoding: 'utf-8'}).split('\n')[0].trim();
+        } else {
+            return execSync('which mcptools', {encoding: 'utf-8'}).trim();
+        }
     } catch {
         try {
             const gopath = execSync('go env GOPATH', {encoding: 'utf-8'}).trim();
-            const mcptoolsPath = join(gopath, 'bin', 'mcptools');
+            const mcptoolsPath = join(gopath, 'bin', process.platform === 'win32' ? 'mcptools.exe' : 'mcptools');
             if (existsSync(mcptoolsPath)) {
                 return mcptoolsPath;
             }
@@ -204,7 +210,8 @@ describe('NPM Package Installation Tests', () => {
         try {
             if (process.platform === 'win32') {
                 // On Windows, use where.exe to find npx.cmd
-                npxPath = execSync('where.exe npx.cmd', {encoding: 'utf-8'}).trim().split('\n')[0];
+                // Split first, then trim to handle Windows \r\n line endings properly
+                npxPath = execSync('where.exe npx.cmd', {encoding: 'utf-8'}).split('\n')[0].trim();
             } else {
                 npxPath = execSync('which npx', {encoding: 'utf-8'}).trim();
             }
