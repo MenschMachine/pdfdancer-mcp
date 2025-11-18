@@ -4,9 +4,16 @@ import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
 import type {TextContent} from '@modelcontextprotocol/sdk/types.js';
 import {fileURLToPath} from 'url';
 import {dirname, join} from 'path';
+import {readFileSync} from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Read the expected version from package.json
+const projectPackageJson = JSON.parse(
+    readFileSync(join(__dirname, '..', 'package.json'), 'utf-8')
+) as {version: string};
+const EXPECTED_VERSION = projectPackageJson.version;
 
 describe('PDFDancer MCP Server E2E Tests', () => {
     let client: Client;
@@ -102,7 +109,7 @@ describe('PDFDancer MCP Server E2E Tests', () => {
 
             if (content[0].type === 'text') {
                 expect(content[0].text).toContain('pdfdancer-mcp version:');
-                expect(content[0].text).toContain('0.1.1');
+                expect(content[0].text).toContain(EXPECTED_VERSION);
             }
 
             expect(result.structuredContent).toBeDefined();

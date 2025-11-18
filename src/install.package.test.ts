@@ -1,10 +1,16 @@
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {execSync} from 'child_process';
-import {mkdtempSync, rmSync, writeFileSync, existsSync, readdirSync} from 'fs';
+import {mkdtempSync, rmSync, writeFileSync, existsSync, readdirSync, readFileSync} from 'fs';
 import {tmpdir} from 'os';
 import {join, resolve} from 'path';
 import {Client} from '@modelcontextprotocol/sdk/client/index.js';
 import {StdioClientTransport} from '@modelcontextprotocol/sdk/client/stdio.js';
+
+// Read the expected version from package.json
+const projectPackageJson = JSON.parse(
+    readFileSync(join(process.cwd(), 'package.json'), 'utf-8')
+) as {version: string};
+const EXPECTED_VERSION = projectPackageJson.version;
 
 // Check if mcptools is available
 function getMcptoolsPath(): string | null {
@@ -190,7 +196,7 @@ describe('NPM Package Installation Tests', () => {
         expect(installedPkgJson.name).toBe('@pdfdancer/pdfdancer-mcp');
 
         // Verify version
-        expect(installedPkgJson.version).toBe('0.1.1');
+        expect(installedPkgJson.version).toBe(EXPECTED_VERSION);
 
         // Verify bin entry exists
         expect(installedPkgJson.bin).toBeDefined();
@@ -242,7 +248,7 @@ describe('NPM Package Installation Tests', () => {
         );
 
         expect(versionResult).toContain('pdfdancer-mcp version:');
-        expect(versionResult).toContain('0.1.1');
+        expect(versionResult).toContain(EXPECTED_VERSION);
 
         // Test search-docs command with JSON output
         // Note: Windows cmd.exe doesn't recognize single quotes as string delimiters
