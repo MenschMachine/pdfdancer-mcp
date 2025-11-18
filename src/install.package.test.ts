@@ -228,16 +228,12 @@ describe('NPM Package Installation Tests', () => {
         const mcptoolsPath = getMcptoolsPath();
         expect(mcptoolsPath).toBeTruthy(); // Fail if mcptools is not found
 
-        // Verify the locally installed package exists
-        const localPackagePath = join(testDir, 'node_modules', '@pdfdancer', 'pdfdancer-mcp', 'dist', 'index.js');
-        expect(existsSync(localPackagePath)).toBe(true);
-
-        // Use npx with --no-install to ensure it uses the locally installed package
+        // Use npx with the tarball directly - this tests the actual built package
         const npxCommand = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 
         // Test version command
         const versionResult = execSync(
-            `${mcptoolsPath} call version "${npxCommand}" --no-install @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call version "${npxCommand}" -y "${tarballPath}"`,
             {
                 encoding: 'utf-8',
                 cwd: testDir
@@ -254,7 +250,7 @@ describe('NPM Package Installation Tests', () => {
             : `'{"query":"page"}'`; // Unix: use single quotes
 
         const searchResult = execSync(
-            `${mcptoolsPath} call search-docs -p ${jsonParam} "${npxCommand}" --no-install @pdfdancer/pdfdancer-mcp`,
+            `${mcptoolsPath} call search-docs -p ${jsonParam} "${npxCommand}" -y "${tarballPath}"`,
             {
                 encoding: 'utf-8',
                 cwd: testDir
