@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="media/logo-orange-60h.webp" alt="PDFDancer logo" height="60">
+  <img src="media/logo-silver-60h.webp" alt="PDFDancer logo" height="60">
 </p>
 
 # pdfdancer-mcp
