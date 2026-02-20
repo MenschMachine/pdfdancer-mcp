@@ -609,4 +609,6 @@ npx -y . # or npm run dev
 - [API documentation](https://docs.pdfdancer.com?utm_source=github&utm_medium=readme&utm_campaign=pdfdancer-mcp)
 - [Product overview](https://www.pdfdancer.com?utm_source=github&utm_medium=readme&utm_campaign=pdfdancer-mcp)
 - [npm](https://www.npmjs.com/package/@pdfdancer/pdfdancer-mcp)
+- [Changelog](https://www.pdfdancer.com/changelog/?utm_source=github&utm_medium=readme&utm_campaign=pdfdancer-mcp)
+- [Status](https://status.pdfdancer.com?utm_source=github&utm_medium=readme&utm_campaign=pdfdancer-mcp)
 - [Issue tracker](https://github.com/MenschMachine/pdfdancer)
